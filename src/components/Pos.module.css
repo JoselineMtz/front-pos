@@ -1,0 +1,367 @@
+/* Pos.module.css */
+
+/* Contenedor principal */
+.posContainerMain {
+  padding: 40px;
+  background: #f4f6fa;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Sección */
+.posSection {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #212529;
+}
+
+/* Contenedor de tarjetas */
+.posCardsContainer {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Tarjetas */
+.posCard {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  padding: 30px;
+  flex: 1 1 400px;
+  max-width: 500px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.posCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+.posCard h4 {
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #212529;
+}
+
+/* Items de formulario */
+.posItem {
+  margin-bottom: 20px;
+}
+
+.posItem label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #495057;
+}
+
+.posItem input,
+.posItem select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ced4da;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.posItem input:focus,
+.posItem select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+  outline: none;
+}
+
+/* Lista de productos */
+.saleItemsList {
+  margin-top: 20px;
+}
+
+.saleItems {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.saleItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 10px;
+  font-size: 1rem;
+}
+
+.saleItemInfo {
+  flex: 1;
+}
+
+.saleItemButtons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Botones de cantidad */
+.qtyButton {
+  background: #e2e8f0;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #374151;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.qtyButton:hover {
+  background: #cbd5e1;
+}
+
+.qtyDisplay {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Scrollbar estilizado */
+.saleItems::-webkit-scrollbar {
+  width: 8px;
+}
+
+.saleItems::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.saleItems::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 8px;
+}
+
+.saleItems::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5;
+}
+
+/* Total */
+.totalDisplay {
+  text-align: right;
+  margin-top: 15px;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* Cambio y Saldo */
+.changeDisplayContainer {
+  width: 100%;
+  max-width: 400px;
+  margin: 30px auto;
+  padding: 30px 20px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+.changeDisplayContainer span {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin: 5px 0;
+  display: block;
+}
+
+.changeDisplayContainer p {
+  font-size: 1.4rem;
+  margin: 5px 0 0 0;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Estados de cambio */
+.positiveChange {
+  color: #10b981;
+  border: 3px solid #10b981;
+  background-color: rgba(16,185,129,0.1);
+}
+
+.negativeChange {
+  color: #ef4444;
+  border: 3px solid #ef4444;
+  background-color: rgba(239,68,68,0.1);
+}
+
+.zeroChange {
+  color: #6c757d;
+  border: 3px solid #adb5bd;
+  background-color: rgba(173,181,189,0.15);
+}
+
+/* Botones */
+.button {
+  display: inline-block;
+  width: 100%;
+  padding: 16px 20px;
+  margin-top: 20px;
+  border-radius: 12px;
+  background-color: #6366f1;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ==================== ESTILOS CRÍTICOS PARA MODALES ==================== */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modalInput {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.modalInput:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.modalButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.permissionModalHeader {
+  background: #fff3cd;
+  padding: 1.5rem;
+  margin: -2rem -2rem 1.5rem -2rem;
+  border-radius: 12px 12px 0 0;
+  border-bottom: 2px solid #ffeaa7;
+}
+
+.permissionModalHeader h3 {
+  color: #856404;
+  margin: 0;
+}
+
+.permissionModalBody {
+  padding: 1rem 0;
+}
+
+.permissionHelpText {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.5rem 0;
+}
+
+.summaryMessage {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  margin: 1rem 0;
+  border-left: 4px solid #28a745;
+}
+
+.summaryMessage pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.customerFound {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  border-left: 4px solid #28a745;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    padding: 1.5rem;
+    max-height: 90vh;
+  }
+  
+  .modalButtons {
+    flex-direction: column;
+  }
+  
+  .modalButtons button {
+    width: 100%;
+  }
+}

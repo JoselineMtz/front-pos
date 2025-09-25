@@ -1,0 +1,512 @@
+/*
+ * Diseño para el panel de administración.
+ * Un enfoque minimalista y moderno con una paleta de colores neutros,
+ * toques de color para las acciones y un diseño completamente responsive.
+ */
+
+/* ==================== Variables de Diseño Globales ==================== */
+:root {
+  --primary-color: #007bff;
+  --primary-dark: #0056b3;
+  --secondary-color: #6c757d;
+  --secondary-dark: #5a6268;
+  --accent-color: #28a745;
+  --accent-dark: #218838;
+  --danger-color: #dc3545;
+  --danger-dark: #c82333;
+
+  --background-light: #f0f2f5;
+  --surface-color: #ffffff;
+  --card-light: #f9f9f9;
+  --text-dark: #212529;
+  --text-light: #667085;
+  --border-color: #e0e0e0;
+  --input-border: #ced4da;
+
+  --font-family: 'Inter', sans-serif;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-light);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* ==================== Contenedores de Layout ==================== */
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+
+.section {
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  background-color: var(--surface-color);
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: var(--text-dark);
+  margin-bottom: 30px;
+  font-size: clamp(1.8em, 5vw, 2.2em);
+  font-weight: 700;
+  border-bottom: 3px solid var(--border-color);
+  padding-bottom: 15px;
+}
+
+/* ==================== Estilos de Sidebar ==================== */
+.sidebar {
+  width: 280px;
+  background-color: var(--text-dark);
+  color: #ecf0f1;
+  padding: 30px 20px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 1.8em;
+  font-weight: 600;
+  color: #fff;
+  border-bottom: 2px solid #34495e;
+  padding-bottom: 15px;
+}
+
+.sidebar nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar nav li {
+  padding: 15px 25px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s;
+  font-weight: 500;
+}
+
+.sidebar nav li:hover {
+  background-color: #34495e;
+  transform: translateX(5px);
+}
+
+/* ==================== Tarjetas y Formularios ==================== */
+.card {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.form-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.form-card {
+  background-color: var(--card-light);
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.form-card h4 {
+  margin: 0 0 20px;
+  font-size: 1.4em;
+  font-weight: 600;
+  color: #555;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  font-size: 1em;
+  box-sizing: border-box;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* ==================== Botones Unificados ==================== */
+.button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: center;
+}
+
+.button-primary {
+  background-color: var(--primary-color);
+}
+
+.button-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+}
+
+.button-success {
+  background-color: var(--accent-color);
+}
+
+.button-success:hover {
+  background-color: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+}
+
+.button-danger {
+  background-color: var(--danger-color);
+}
+
+.button-danger:hover {
+  background-color: var(--danger-dark);
+  transform: scale(1.05);
+}
+
+.button-secondary {
+  background-color: var(--secondary-color);
+}
+
+.button-secondary:hover {
+  background-color: var(--secondary-dark);
+  transform: scale(1.05);
+}
+
+.button-sm {
+  width: auto;
+  padding: 10px 18px;
+  font-size: 0.9em;
+  border-radius: 6px;
+}
+
+.add-button, .finalize-button {
+  background-color: var(--accent-color);
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+
+.edit-button {
+  background-color: #ffc107;
+  color: var(--text-dark);
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+/* ==================== Lista de Productos y Categorías ==================== */
+.product-list-container {
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  background-color: var(--surface-color);
+}
+
+.list-title {
+  font-size: 1.8em;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 25px;
+}
+
+.product-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.product-item-card {
+  background-color: var(--card-light);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-details,
+.edit-form {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.details-text p {
+  margin: 5px 0;
+  color: var(--text-light);
+}
+
+.details-text p strong {
+  color: var(--text-dark);
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.added-products-list-container {
+  background-color: var(--surface-color);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  margin-top: 40px;
+}
+
+/* ==================== Estilos para el POS ==================== */
+.pos-section {
+  max-width: 800px;
+  margin: auto;
+}
+
+.pos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  align-items: center;
+}
+
+.pos-card {
+  width: 100%;
+  padding: 30px;
+  border-radius: 12px;
+  background-color: var(--card-light);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.change-display {
+  text-align: center;
+  transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.summary-text {
+  margin: 10px 0;
+  font-size: 1.2em;
+  color: var(--text-light);
+}
+
+.summary-text .value {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.change-value {
+  font-size: 3em;
+  font-weight: 700;
+  margin: 0;
+  transition: color 0.5s ease-in-out;
+}
+
+/* Clases dinámicas para los colores del cambio */
+.positive-change {
+  background-color: #e6f7ec;
+  box-shadow: 0 4px 20px rgba(40, 167, 69, 0.2);
+}
+
+.positive-change .change-value {
+  color: var(--accent-color);
+}
+
+.negative-change {
+  background-color: #f8e8e9;
+  box-shadow: 0 4px 20px rgba(220, 53, 69, 0.2);
+}
+
+.negative-change .change-value {
+  color: var(--danger-color);
+}
+
+.zero-change {
+  background-color: #e8f3fb;
+  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
+}
+
+.zero-change .change-value {
+  color: var(--primary-color);
+}
+
+/* ==================== Mensajes y Modales ==================== */
+.message {
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  text-align: center;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.message.success {
+  background-color: #e6f7ec;
+  color: var(--accent-dark);
+  border-color: var(--accent-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.message.error {
+  background-color: #f8e8e9;
+  color: var(--danger-dark);
+  border-color: var(--danger-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+  background-color: var(--surface-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+  overflow: hidden;
+  animation: slideIn 0.3s ease-in-out;
+}
+
+/* ==================== Animaciones ==================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* ==================== Estilos Específicos Adicionales ==================== */
+.calculation-mode-toggle {
+  display: flex;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #e9ecef;
+}
+
+.mode-button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.mode-button:hover {
+  background-color: #d8dee3;
+}
+
+.mode-button.active {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+}
+
+.suggested-price {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 20px 0;
+  text-align: center;
+}
+
+.suggested-price strong {
+  color: var(--accent-color);
+}
+.button-toggle-charts {
+  /* Estilos básicos */
+  background-color: #007bff; /* Un azul primario para destacar */
+  color: white; /* Texto blanco para un buen contraste */
+  border: none; /* Sin borde */
+  border-radius: 8px; /* Bordes redondeados */
+  padding: 12px 20px; /* Espaciado interno generoso */
+  font-size: 1rem; /* Tamaño de fuente legible */
+  font-weight: 600; /* Texto seminegrita para que resalte */
+  cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Transiciones para efectos suaves */
+  
+  /* Margen y alineación */
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex; /* Para alinear el ícono y el texto */
+  align-items: center; /* Centra verticalmente los elementos */
+  gap: 10px; /* Espacio entre el ícono y el texto */
+}
+
+/* Efecto al pasar el cursor (hover) */
+.button-toggle-charts:hover {
+  background-color: #0056b3; /* Un tono de azul más oscuro */
+  transform: translateY(-2px); /* Eleva el botón ligeramente */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Añade una sombra sutil */
+}
+
+/* Efecto al hacer clic (active) */
+.button-toggle-charts:active {
+  background-color: #004494; /* Aún más oscuro para el efecto de "presionado" */
+  transform: translateY(0); /* Vuelve a la posición original */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra más pequeña */
+}

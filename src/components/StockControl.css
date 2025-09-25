@@ -1,0 +1,705 @@
+/* StockControl.css - CSS con alta especificidad para sobrescribir admin.css */
+
+/* CONTENEDORES PRINCIPALES */
+body .posContainerMain {
+  padding: 40px 20px;
+  background: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+}
+
+body .posSection {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+body .sectionTitle {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/* TARJETAS DE FORMULARIO */
+body .posCardsContainer {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 30px;
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .form-card {
+  background: #ffffff !important;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  padding: 30px;
+  flex: 1 1 500px;
+  max-width: 600px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 30px;
+  border: 1px solid #e5e7eb;
+}
+
+body .form-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+}
+
+body .form-card h4 {
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1f2937;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+body .form-card h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #4f46e5);
+  border-radius: 3px;
+}
+
+/* ELEMENTOS DE FORMULARIO */
+body .posItem {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+body .posItem input,
+body .posItem select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  background: #ffffff;
+  color: #374151;
+}
+
+body .posItem input:focus,
+body .posItem select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  outline: none;
+  background: #ffffff;
+}
+
+body .input-group {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+body .input-group input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+body .input-group select {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  flex: 1;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
+/* BOTONES - ESTILOS CON ALTA ESPECIFICIDAD */
+body .posContainerMain .button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px 20px !important;
+  margin-top: 15px !important;
+  border-radius: 12px !important;
+  color: white !important;
+  font-weight: 700 !important;
+  font-size: 1.1rem !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  text-decoration: none !important;
+}
+
+body .posContainerMain .button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15) !important;
+}
+
+/* Botón principal (Agregar/Actualizar Producto) */
+body .posContainerMain .form-card .button:not(.manage-categories-button):not(.edit-button):not(.delete-button):not(.save-button):not(.cancel-button) {
+  background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+}
+
+body .posContainerMain .form-card .button:not(.manage-categories-button):not(.edit-button):not(.delete-button):not(.save-button):not(.cancel-button):hover {
+  background: linear-gradient(135deg, #4f46e5, #3730a3) !important;
+}
+
+/* Botón Agregar Categoría */
+body .posContainerMain .form-card .button:not(.manage-categories-button) {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+}
+
+body .posContainerMain .form-card .button:not(.manage-categories-button):hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+}
+
+/* Botón Administrar Categorías */
+body .posContainerMain .form-card .button.manage-categories-button {
+  background: linear-gradient(135deg, #9ca3af, #6b7280) !important;
+}
+
+body .posContainerMain .form-card .button.manage-categories-button:hover {
+  background: linear-gradient(135deg, #6b7280, #4b5563) !important;
+}
+
+/* Botones en tarjetas de productos */
+body .posContainerMain .product-item-card .button-group .button {
+  width: auto !important;
+  padding: 12px 18px !important;
+  margin-top: 0 !important;
+}
+
+/* Botón Editar */
+body .posContainerMain .product-item-card .button-group .button.edit-button {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+}
+
+body .posContainerMain .product-item-card .button-group .button.edit-button:hover {
+  background: linear-gradient(135deg, #d97706, #b45309) !important;
+}
+
+/* Botón Eliminar */
+body .posContainerMain .product-item-card .button-group .button.delete-button {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+}
+
+body .posContainerMain .product-item-card .button-group .button.delete-button:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+}
+
+/* Botón Ver Inventario Completo */
+body .posContainerMain .show-full-stock-button {
+  width: auto !important;
+  padding: 16px 30px !important;
+  margin: 30px auto !important;
+  display: block !important;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+}
+
+body .posContainerMain .show-full-stock-button:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
+}
+
+/* Botón Volver */
+body .posContainerMain .back-button {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed) !important;
+  padding: 12px 24px !important;
+  width: auto !important;
+  margin-top: 0 !important;
+}
+
+body .posContainerMain .back-button:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9) !important;
+}
+
+/* Botón Eliminar Categoría */
+body .posContainerMain .delete-category-button {
+  background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+  color: white !important;
+  border: none !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-size: 0.9rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+  font-weight: 600 !important;
+}
+
+body .posContainerMain .delete-category-button:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Botones en modales */
+body .posContainerMain .modalButtons .button {
+  margin-top: 0 !important;
+  min-width: 120px !important;
+  padding: 12px 20px !important;
+}
+
+/* Botón Cancelar en modales */
+body .posContainerMain .modalButtons .button.cancel-button {
+  background: linear-gradient(135deg, #6b7280, #4b5563) !important;
+}
+
+body .posContainerMain .modalButtons .button.cancel-button:hover {
+  background: linear-gradient(135deg, #4b5563, #374151) !important;
+}
+
+/* Botón Guardar en formularios de edición */
+body .posContainerMain .edit-form .button-group .button.save-button {
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+}
+
+body .posContainerMain .edit-form .button-group .button.save-button:hover {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+}
+
+/* LISTA DE PRODUCTOS */
+body .product-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+body .product-item-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+}
+
+body .product-item-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-color: #6366f1;
+}
+
+body .product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+body .details-text p {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+body .details-text strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+body .button-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* GESTIÓN DE CATEGORÍAS */
+body .category-management {
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 1px solid #e5e7eb;
+}
+
+body .category-management h5 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #1f2937;
+}
+
+body .category-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+body .category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f9fafb;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #f3f4f6;
+}
+
+/* INVENTARIO COMPLETO */
+body .full-stock-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 25px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+}
+
+body .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body .search-input {
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 1rem;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+body .search-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  outline: none;
+}
+
+/* ÚLTIMOS PRODUCTOS AGREGADOS */
+body .latest-products {
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #ffffff !important;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border: 1px solid #e5e7eb;
+}
+
+/* FORMULARIO DE EDICIÓN */
+body .edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+body .edit-form .posItem {
+  margin-bottom: 15px;
+}
+
+/* MODALES */
+body .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  z-index: 1000;
+}
+
+body .modalContent {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+}
+
+body .modalContent h4 {
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+body .modalContent p {
+  margin-bottom: 15px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+body .warning-text {
+  color: #ef4444 !important;
+  font-weight: 600;
+}
+
+body .modalButtons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* MENSAJES DE ÉXITO */
+body .success-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  font-weight: 600;
+  animation: slideInFromTop 0.5s ease-out;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  max-width: 1300px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+body .success-message.added {
+  color: #065f46;
+  border-left: 4px solid #10b981;
+}
+
+body .success-message.updated {
+  color: #1e40af;
+  border-left: 4px solid #3b82f6;
+}
+
+body .success-message.deleted {
+  color: #991b1b;
+  border-left: 4px solid #ef4444;
+}
+
+body .message-icon {
+  font-size: 1.4rem;
+}
+
+/* ANIMACIONES */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  body .posCardsContainer {
+    max-width: 90%;
+  }
+  
+  body .form-card {
+    flex: 1 1 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  body .posContainerMain {
+    padding: 20px 15px;
+  }
+  
+  body .sectionTitle {
+    font-size: 2.2rem;
+    margin-bottom: 30px;
+  }
+  
+  body .posCardsContainer {
+    flex-direction: column;
+    max-width: 100%;
+  }
+  
+  body .form-card {
+    max-width: 100%;
+  }
+  
+  body .button-group {
+    flex-direction: column;
+  }
+  
+  body .modalButtons {
+    flex-direction: column;
+  }
+  
+  body .modalButtons .button {
+    width: 100% !important;
+  }
+  
+  body .section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  body .back-button {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  body .sectionTitle {
+    font-size: 1.8rem;
+  }
+  
+  body .form-card h4 {
+    font-size: 1.5rem;
+  }
+  
+  body .product-list {
+    grid-template-columns: 1fr;
+  }
+  
+  body .button {
+    padding: 14px 16px !important;
+    font-size: 1rem !important;
+  }
+  
+  body .modalContent {
+    padding: 20px;
+  }
+  
+  body .success-message {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+  
+  body .form-card, body .latest-products {
+    padding: 20px;
+  }
+}
+/* Modal de permisos insuficientes */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.permission-modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.permission-modal-header {
+    margin-bottom: 1.5rem;
+}
+
+.permission-modal-header h3 {
+    color: #dc3545;
+    margin: 0;
+}
+
+.permission-modal-body {
+    margin-bottom: 2rem;
+}
+
+.permission-modal-body p {
+    margin: 0.5rem 0;
+    line-height: 1.5;
+}
+
+.permission-help-text {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-style: italic;
+    margin-top: 1rem !important;
+}
+
+.permission-modal-footer {
+    display: flex;
+    justify-content: center;
+}
+/* StockControl.css - Agregar esto al final del archivo */
+
+/* RESET COMPLETO para el botón del modal de permisos */
+body .posContainerMain .modal-overlay .permission-modal .permission-modal-footer .button.confirm-button {
+    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+    background-color: #6366f1 !important;
+    color: white !important;
+    border: none !important;
+    padding: 14px 24px !important;
+    border-radius: 12px !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    width: auto !important;
+    min-width: 120px !important;
+    margin-top: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3) !important;
+}
+
+body .posContainerMain .modal-overlay .permission-modal .permission-modal-footer .button.confirm-button:hover {
+    background: linear-gradient(135deg, #4f46e5, #3730a3) !important;
+    background-color: #4f46e5 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* También asegurar el estilo del modal completo */
+body .posContainerMain .modal-overlay .permission-modal {
+    background: white !important;
+    padding: 2.5rem !important;
+    border-radius: 20px !important;
+    width: 450px !important;
+    max-width: 90vw !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3) !important;
+    text-align: center !important;
+    border: 2px solid #e5e7eb !important;
+}
+
+body .posContainerMain .modal-overlay .permission-modal .permission-modal-header h3 {
+    color: #dc3545 !important;
+    margin: 0 0 1rem 0 !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+}
+
+body .posContainerMain .modal-overlay .permission-modal .permission-modal-body p {
+    margin: 1rem 0 !important;
+    line-height: 1.6 !important;
+    font-size: 1.1rem !important;
+    color: #4b5563 !important;
+}

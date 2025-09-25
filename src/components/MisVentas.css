@@ -1,0 +1,777 @@
+.mis-ventas-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ventas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.ventas-header h2 {
+  color: #2c3e50;
+  margin: 0;
+  font-size: 2rem;
+}
+
+.filtros {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filtros button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #e9ecef;
+  background: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filtros button:hover {
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.filtros button.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+/* Estadísticas */
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.estadistica-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.estadistica-card:hover {
+  transform: translateY(-2px);
+}
+
+.estadistica-icon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  color: #3498db;
+}
+
+.estadistica-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.estadistica-valor {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.estadistica-valor.deuda {
+  color: #e74c3c;
+}
+
+/* Lista de ventas */
+.ventas-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ventas-section h3 {
+  margin: 0 0 1.5rem 0;
+  color: #2c3e50;
+  font-size: 1.3rem;
+}
+
+.sin-ventas {
+  text-align: center;
+  padding: 3rem;
+  color: #6c757d;
+}
+
+.ventas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.venta-tarjeta {
+  border: 2px solid #e9ecef;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.venta-tarjeta:hover {
+  border-color: #3498db;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+  transform: translateY(-1px);
+}
+
+.venta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.venta-numero {
+  font-weight: 700;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.venta-fecha {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.venta-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.venta-monto {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.venta-monto strong {
+  font-size: 1.3rem;
+  color: #27ae60;
+}
+
+.metodo-pago {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.metodo-pago.efectivo {
+  background: #d4edda;
+  color: #155724;
+}
+
+.metodo-pago.transferencia {
+  background: #cce7ff;
+  color: #004085;
+}
+
+.metodo-pago.credito {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.venta-cliente {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.venta-deuda {
+  color: #e74c3c;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.venta-transferencia-info {
+  font-size: 0.85rem;
+  color: #2c5aa0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ==================== CORRECCIÓN CRÍTICA DEL MODAL ==================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000; /* Z-index muy alto para asegurar que esté por encima */
+  padding: 20px;
+  overflow: auto;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh; /* Altura máxima del 85% de la ventana */
+  overflow: hidden; /* Oculta el overflow del contenedor principal */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 2px solid #f8f9fa;
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0; /* Evita que se encoja */
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.3rem;
+}
+
+.cerrar-modal {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.cerrar-modal:hover {
+  background: #f8f9fa;
+  color: #2c3e50;
+  transform: scale(1.1);
+}
+
+.venta-detalles {
+  padding: 1.5rem;
+  overflow-y: auto; /* Scroll interno solo para el contenido */
+  flex-grow: 1; /* Ocupa el espacio disponible */
+  max-height: calc(85vh - 100px); /* Altura máxima menos el header */
+}
+
+.detalle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.detalle-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.detalle-item label {
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.detalle-item span {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+.transferencia-info {
+  background-color: #f0f8ff;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border-left: 3px solid #3498db;
+  grid-column: 1 / -1;
+}
+
+.monto-total {
+  font-weight: 700;
+  color: #27ae60;
+  font-size: 1.2rem !important;
+}
+
+.deuda-texto {
+  color: #e74c3c !important;
+  font-weight: 600;
+}
+
+.productos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  border: 1px solid #eee;
+  border-radius: 0.5rem;
+}
+
+.producto-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.producto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.producto-nombre {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.producto-sku {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.producto-precios {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.producto-cantidad {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.producto-total {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.producto-total-general {
+  padding: 1rem;
+  background: #e9ecef;
+  border-radius: 0.5rem;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Pago de deuda */
+.pago-deuda {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.input-deuda {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.btn-registrar-pago {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  white-space: nowrap;
+}
+
+.btn-registrar-pago:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.btn-registrar-pago:active {
+  transform: scale(0.98);
+}
+
+/* ==================== MODAL DE DEUDA ESPECÍFICO ==================== */
+.modal-deuda {
+  max-width: 700px;
+  max-height: 80vh;
+}
+
+.modal-deuda .modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex-grow: 1;
+  max-height: calc(80vh - 100px);
+}
+
+.lista-deuda {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.cliente-deuda-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-left: 5px solid #ff6347;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cliente-deuda-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cliente-info-deuda {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cliente-nombre-deuda,
+.cliente-rut-deuda,
+.cliente-telefono-deuda {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.cliente-nombre-deuda strong {
+  color: #000;
+  font-size: 1.1rem;
+}
+
+.cliente-deuda-item svg {
+  color: #999;
+  font-size: 1rem;
+}
+
+.cliente-monto-deuda {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #d9534f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffeaea;
+  padding: 8px 12px;
+  border-radius: 20px;
+}
+
+.cliente-monto-deuda svg {
+  color: #d9534f;
+}
+
+/* ==================== SECCIÓN DE GRÁFICOS ==================== */
+.chart-container {
+  width: 100%;
+  max-width: 1200px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  margin: 20px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.chart-container:hover {
+  transform: translateY(-5px);
+}
+
+.chart-container h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.no-chart-data {
+  text-align: center;
+  color: #777;
+  font-size: 1rem;
+  padding: 50px;
+}
+
+.charts-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+/* ==================== BOTÓN TOGGLE CHARTS ==================== */
+.button-toggle-charts {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  transition: all 0.3s ease;
+}
+
+.button-toggle-charts:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+}
+
+/* ==================== MODAL DE PERMISOS ==================== */
+.permission-modal {
+  max-width: 500px;
+  text-align: center;
+}
+
+.permission-modal-header {
+  background: #fff3cd;
+  padding: 1.5rem;
+  border-bottom: 2px solid #ffeaa7;
+  border-radius: 12px 12px 0 0;
+}
+
+.permission-modal-header h3 {
+  color: #856404;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.permission-modal-body {
+  padding: 2rem;
+}
+
+.permission-modal-body p {
+  margin: 1rem 0;
+  line-height: 1.5;
+}
+
+.permission-help-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.permission-modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+}
+
+.confirm-button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.confirm-button:hover {
+  background: #218838;
+  transform: scale(1.05);
+}
+
+/* ==================== MENSAJES DE ERROR ==================== */
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid #dc3545;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+  .mis-ventas-container {
+    padding: 1rem;
+  }
+  
+  .ventas-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .estadisticas-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .venta-info {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .detalle-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .transferencia-info {
+    grid-column: 1;
+  }
+  
+  .producto-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .producto-precios {
+    align-items: center;
+  }
+  
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .venta-detalles {
+    max-height: calc(90vh - 100px);
+    padding: 1rem;
+  }
+  
+  .modal-deuda {
+    max-height: 85vh;
+  }
+  
+  .modal-deuda .modal-body {
+    max-height: calc(85vh - 100px);
+  }
+  
+  .pago-deuda {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .input-deuda {
+    min-width: auto;
+  }
+  
+  .cliente-deuda-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 10px;
+  }
+  
+  .modal-content {
+    width: 100%;
+    max-height: 95vh;
+    border-radius: 8px;
+  }
+  
+  .modal-header {
+    padding: 1rem;
+  }
+  
+  .venta-detalles {
+    padding: 1rem;
+    max-height: calc(95vh - 80px);
+  }
+  
+  .modal-header h3 {
+    font-size: 1.1rem;
+  }
+}
+
+.cargando {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.1rem;
+  color: #6c757d;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #666;
+  background: #f8f9fa;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
