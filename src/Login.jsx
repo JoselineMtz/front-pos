@@ -26,14 +26,32 @@ export default function Login() {
     }
   };
 
-  const checkConfig = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/api/config`);
-      setError(`🔧 Configuración: ${JSON.stringify(response.data, null, 2)}`);
-    } catch (err) {
-      setError("❌ No se puede obtener la configuración");
-    }
-  };
+// En tu componente Login, actualiza la función testConfig:
+const testConfig = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/api/config`);
+    const config = response.data;
+    
+    setError(`
+🔧 CONFIGURACIÓN DETALLADA:
+    
+Supabase URL: ${config.supabase.url}
+Supabase Key: ${config.supabase.key}
+Estado: ${config.supabase.status}
+Detalles: ${config.supabase.details}
+
+JWT: ${config.jwt}
+Timestamp: ${config.timestamp}
+
+💡 SUGERENCIAS:
+${config.supabase.status.includes('❌') ? 
+  '• Verifica que la tabla "usuarios" exista en Supabase\n• Revisa las políticas RLS\n• Inserta datos de prueba' : 
+  '• La conexión parece correcta, prueba con usuarios reales'}
+    `);
+  } catch (err) {
+    setError("❌ No se puede obtener la configuración");
+  }
+};
 
   const handleLogin = async (e) => {
     e.preventDefault();
