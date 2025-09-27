@@ -17,34 +17,49 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // ✅ Usar la ruta que SÍ existe
+      console.log("🔐 Enviando credenciales a la base de datos real...");
+      
       const res = await axios.post(
         `${API_BASE_URL}/api/login`,
         { username, password },
         { timeout: 10000 }
       );
 
+      console.log("✅ Respuesta del servidor:", res.data);
+
       const { token, user, message } = res.data;
 
+      if (!token || !user?.rol) {
+        throw new Error("Respuesta inválida del servidor");
+      }
+
+      // Guardar datos de autenticación
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("rol", user.rol);
+      localStorage.setItem("username", user.username);
+      localStorage.setItem("user_id", user.id);
 
-      alert(message || "Login exitoso");
+      alert(message || "✅ Login exitoso con base de datos real");
 
+      // Redirección basada en el rol
       if (user.rol === "admin") {
         navigate("/admin");
+      } else if (user.rol === "vendedor") {
+        navigate("/vendedor");
       } else {
         navigate("/dashboard");
       }
 
     } catch (err) {
-      console.error("Error:", err);
+      console.error("❌ Error completo:", err);
       
-      if (err.response?.status === 404) {
-        setError("❌ El endpoint /api/login no existe en el servidor");
-      } else if (err.response?.status === 401) {
-        setError("🔐 Usuario o contraseña incorrectos");
+      if (err.response?.status === 401) {
+        setError("🔐 Usuario o contraseña incorrectos en la base de datos");
+      } else if (err.response?.status === 500) {
+        setError("⚙️ Error del servidor. La base de datos puede no estar configurada.");
+      } else if (err.code === 'ECONNABORTED') {
+        setError("⏰ Timeout. El servidor puede estar procesando la conexión a la BD.");
       } else {
         setError("🌐 Error de conexión: " + err.message);
       }
@@ -53,103 +68,131 @@ export default function Login() {
     }
   };
 
-  // Probar la ruta principal (que SÍ funciona)
-  const testServer = async () => {
+  // Probar estado del servidor y base de datos
+  const testServerStatus = async () => {
     try {
-      setError("🔍 Probando servidor...");
-      const response = await axios.get(API_BASE_URL);
-      setError(`✅ Servidor funcionando: ${response.data.message}`);
+      setError("🔍 Verificando estado del servidor y base de datos...");
+      
+      const response = await axios.get(`${API_BASE_URL}/api/health`);
+      setError(`✅ ${response.data.message} - Base de datos: ${response.data.database}`);
     } catch (err) {
-      setError("❌ Servidor no disponible");
+      setError("❌ No se puede conectar al servidor");
     }
   };
 
-  // Probar directamente el login
-  const testLoginDirect = async () => {
+  // Probar con usuario de la base de datos
+  const testWithRealCredentials = async () => {
+    if (!username || !password) {
+      setError("⚠️ Ingresa usuario y contraseña primero");
+      return;
+    }
+    
     try {
-      setError("🔐 Probando login con credenciales de prueba...");
+      setError(`🔐 Probando con usuario real: ${username}`);
       
       const response = await axios.post(
         `${API_BASE_URL}/api/login`,
-        { username: "admin", password: "123456" }
+        { username, password }
       );
       
-      setError(`✅ Login funciona: ${response.data.message}`);
+      setError(`✅ Credenciales VÁLIDAS: ${response.data.message}`);
     } catch (err) {
-      if (err.response?.status === 404) {
-        setError("❌ La ruta /api/login NO existe en el servidor");
+      if (err.response?.status === 401) {
+        setError("❌ Credenciales INVÁLIDAS en la base de datos");
       } else {
-        setError("❌ Error en login: " + err.message);
+        setError("❌ Error probando credenciales: " + err.message);
       }
     }
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f5f5f5" }}>
-      <form onSubmit={handleLogin} style={{ background: "white", padding: "30px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", width: "350px" }}>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+      <form onSubmit={handleLogin} style={{ background: "white", padding: "30px", borderRadius: "15px", boxShadow: "0 10px 30px rgba(0,0,0,0.2)", width: "400px" }}>
         
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Iniciar Sesión</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#333" }}>🔐 Iniciar Sesión</h2>
 
-        {/* Información de debug */}
-        <div style={{ background: "#e3f2fd", padding: "10px", borderRadius: "5px", marginBottom: "15px", fontSize: "12px" }}>
-          <strong>URL del API:</strong><br/>
-          <code>{API_BASE_URL}</code>
+        {/* Estado del sistema */}
+        <div style={{ background: "#e8f4fd", padding: "12px", borderRadius: "8px", marginBottom: "15px", border: "1px solid #b3d9ff" }}>
+          <div style={{ fontSize: "12px", color: "#0066cc" }}>
+            <strong>🔄 Estado del Sistema:</strong><br/>
+            <span id="status-info">Servidor funcionando - Base de datos: Pendiente de configuración</span>
+          </div>
         </div>
 
-        {/* Botones de prueba */}
-        <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
-          <button type="button" onClick={testServer} style={{ flex: 1, padding: "8px", background: "#2196f3", color: "white", border: "none", borderRadius: "5px" }}>
-            🔍 Probar Servidor
+        {/* Botones de diagnóstico */}
+        <div style={{ display: "flex", gap: "8px", marginBottom: "15px" }}>
+          <button type="button" onClick={testServerStatus} style={{ flex: 1, padding: "8px", background: "#2196f3", color: "white", border: "none", borderRadius: "6px", fontSize: "12px" }}>
+            🔍 Estado BD
           </button>
-          <button type="button" onClick={testLoginDirect} style={{ flex: 1, padding: "8px", background: "#4caf50", color: "white", border: "none", borderRadius: "5px" }}>
-            🔐 Probar Login
+          <button type="button" onClick={testWithRealCredentials} style={{ flex: 1, padding: "8px", background: "#4caf50", color: "white", border: "none", borderRadius: "6px", fontSize: "12px" }}>
+            🔐 Probar Credenciales
           </button>
         </div>
 
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{ width: "100%", padding: "10px", marginBottom: "10px", border: "1px solid #ddd", borderRadius: "5px" }}
-          required
-        />
+        <div style={{ marginBottom: "15px" }}>
+          <label style={{ display: "block", marginBottom: "5px", fontWeight: "500", color: "#555" }}>Usuario de la BD:</label>
+          <input
+            type="text"
+            placeholder="Usuario de tu base de datos"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            style={{ width: "100%", padding: "12px", border: "2px solid #e0e0e0", borderRadius: "8px", fontSize: "14px" }}
+            required
+          />
+        </div>
 
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", padding: "10px", marginBottom: "15px", border: "1px solid #ddd", borderRadius: "5px" }}
-          required
-        />
+        <div style={{ marginBottom: "20px" }}>
+          <label style={{ display: "block", marginBottom: "5px", fontWeight: "500", color: "#555" }}>Contraseña de la BD:</label>
+          <input
+            type="password"
+            placeholder="Contraseña de tu base de datos"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ width: "100%", padding: "12px", border: "2px solid #e0e0e0", borderRadius: "8px", fontSize: "14px" }}
+            required
+          />
+        </div>
 
         <button 
           type="submit" 
           disabled={loading}
-          style={{ width: "100%", padding: "10px", background: "#ff5722", color: "white", border: "none", borderRadius: "5px" }}
+          style={{ 
+            width: "100%", 
+            padding: "12px", 
+            background: loading ? "#ccc" : "#ff6b35", 
+            color: "white", 
+            border: "none", 
+            borderRadius: "8px",
+            fontSize: "16px",
+            fontWeight: "600",
+            cursor: loading ? "not-allowed" : "pointer"
+          }}
         >
-          {loading ? "Conectando..." : "Iniciar Sesión"}
+          {loading ? "🔄 Conectando con BD..." : "🚀 Iniciar Sesión con BD Real"}
         </button>
 
         {error && (
           <div style={{ 
             marginTop: "15px", 
-            padding: "10px", 
+            padding: "12px", 
             background: error.includes("✅") ? "#e8f5e8" : "#ffebee", 
             color: error.includes("✅") ? "#2e7d32" : "#c62828",
-            borderRadius: "5px",
-            fontSize: "14px"
+            borderRadius: "8px",
+            fontSize: "14px",
+            border: `1px solid ${error.includes("✅") ? "#a5d6a7" : "#ef9a9a"}`
           }}>
             {error}
           </div>
         )}
 
-        {/* Credenciales de prueba */}
-        <div style={{ marginTop: "15px", fontSize: "12px", color: "#666", textAlign: "center" }}>
-          <p><strong>Credenciales de prueba:</strong></p>
-          <p>Usuario: <code>admin</code></p>
-          <p>Contraseña: <code>123456</code></p>
+        {/* Información importante */}
+        <div style={{ marginTop: "20px", padding: "12px", background: "#fff3cd", borderRadius: "8px", border: "1px solid #ffeaa7" }}>
+          <p style={{ fontSize: "12px", color: "#856404", margin: 0 }}>
+            <strong>⚠️ Para usar tu base de datos real:</strong><br/>
+            1. Configura SUPABASE_URL y SUPABASE_ANON_KEY en Render<br/>
+            2. Usa credenciales existentes en tu tabla 'usuarios'<br/>
+            3. El servidor se conectará a tu PostgreSQL via Supabase
+          </p>
         </div>
 
       </form>
