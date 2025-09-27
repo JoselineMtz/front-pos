@@ -9,331 +9,149 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ URL CORREGIDA: Usar Render en lugar de Vercel
-  const API_BASE_URL = "https://pos-sales-yo.onrender.com/api";
+  const API_BASE_URL = "https://pos-sales-yo.onrender.com";
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    console.log("🔐 Intentando login en:", `${API_BASE_URL}/login`);
-
     try {
+      // ✅ Usar la ruta que SÍ existe
       const res = await axios.post(
-        `${API_BASE_URL}/login`,  // ✅ URL correcta
-        {
-          username,
-          password,
-        },
-        {
-          timeout: 10000,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
+        `${API_BASE_URL}/api/login`,
+        { username, password },
+        { timeout: 10000 }
       );
-
-      console.log("✅ Respuesta del servidor:", res.data);
 
       const { token, user, message } = res.data;
 
-      if (!token || !user?.rol) {
-        throw new Error("Respuesta inválida del servidor: Token o rol faltante.");
-      }
-
-      // Guardar datos de autenticación
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("rol", user.rol);
-      localStorage.setItem("username", user.username);
-      localStorage.setItem("user_id", user.id);
 
-      alert(message || "Inicio de sesión exitoso");
+      alert(message || "Login exitoso");
 
-      // Redirección basada en el rol
       if (user.rol === "admin") {
         navigate("/admin");
-      } else if (user.rol === "vendedor") {
-        navigate("/vendedor");
       } else {
         navigate("/dashboard");
       }
+
     } catch (err) {
-      console.error("❌ Error completo en login:", err);
+      console.error("Error:", err);
       
-      if (axios.isAxiosError(err)) {
-        if (err.response) {
-          // Error del servidor (404, 401, 500, etc.)
-          if (err.response.status === 404) {
-            setError("❌ Ruta no encontrada (404). Verifica la URL del API.");
-          } else if (err.response.status === 401) {
-            setError("🔐 Usuario o contraseña incorrectos");
-          } else if (err.response.status === 500) {
-            setError("⚙️ Error del servidor. Intenta nuevamente.");
-          } else {
-            setError(err.response.data.message || `Error ${err.response.status}`);
-          }
-        } else if (err.request) {
-          // No hubo respuesta del servidor
-          setError("🌐 No hay respuesta del servidor. Verifica:");
-          setError(prev => prev + "\n• Que el servidor esté funcionando");
-          setError(prev => prev + "\n• Que la URL sea correcta");
-          setError(prev => prev + "\n• Tu conexión a internet");
-        } else {
-          setError("📱 Error en la configuración: " + err.message);
-        }
+      if (err.response?.status === 404) {
+        setError("❌ El endpoint /api/login no existe en el servidor");
+      } else if (err.response?.status === 401) {
+        setError("🔐 Usuario o contraseña incorrectos");
       } else {
-        setError("❌ Error inesperado: " + err.message);
+        setError("🌐 Error de conexión: " + err.message);
       }
     } finally {
       setLoading(false);
     }
   };
 
-  // Probar conexión con el servidor
-  const testConnection = async () => {
+  // Probar la ruta principal (que SÍ funciona)
+  const testServer = async () => {
     try {
-      setError("🔍 Probando conexión con el servidor...");
-      
-      // Probar la ruta principal primero
-      const healthResponse = await axios.get(API_BASE_URL.replace('/api', ''));
-      console.log("Health check:", healthResponse.data);
-      
-      setError(`✅ Servidor conectado: ${healthResponse.data.message}`);
+      setError("🔍 Probando servidor...");
+      const response = await axios.get(API_BASE_URL);
+      setError(`✅ Servidor funcionando: ${response.data.message}`);
     } catch (err) {
-      console.error("Error en test de conexión:", err);
+      setError("❌ Servidor no disponible");
+    }
+  };
+
+  // Probar directamente el login
+  const testLoginDirect = async () => {
+    try {
+      setError("🔐 Probando login con credenciales de prueba...");
       
-      if (axios.isAxiosError(err) && err.response) {
-        setError(`❌ Error ${err.response.status}: ${err.response.statusText}`);
+      const response = await axios.post(
+        `${API_BASE_URL}/api/login`,
+        { username: "admin", password: "123456" }
+      );
+      
+      setError(`✅ Login funciona: ${response.data.message}`);
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setError("❌ La ruta /api/login NO existe en el servidor");
       } else {
-        setError("❌ No se puede conectar al servidor. Verifica la URL.");
+        setError("❌ Error en login: " + err.message);
       }
     }
   };
 
-  // Probar ruta de login específica
-  const testLoginEndpoint = async () => {
-    try {
-      setError("🔍 Probando endpoint de login...");
-      
-      const response = await axios.get(`${API_BASE_URL}/health`);
-      setError(`✅ Endpoint funcionando: ${response.data.message}`);
-    } catch (err) {
-      setError("❌ Endpoint no disponible. Verifica las rutas del API.");
-    }
-  };
-
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-        background: "linear-gradient(135deg, #f8fafc, #e2e8f0)",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-      }}
-    >
-      <form
-        onSubmit={handleLogin}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          width: 420,
-          padding: 30,
-          borderRadius: "16px",
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
-          backgroundColor: "#ffffff",
-          border: "1px solid #e2e8f0",
-        }}
-      >
-        <h2
-          style={{
-            textAlign: "center",
-            marginBottom: 25,
-            color: "#1f2937",
-            fontSize: "28px",
-            fontWeight: "600",
-          }}
-        >
-          Iniciar Sesión - POS
-        </h2>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f5f5f5" }}>
+      <form onSubmit={handleLogin} style={{ background: "white", padding: "30px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", width: "350px" }}>
+        
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Iniciar Sesión</h2>
 
-        {/* Información de conexión */}
-        <div style={{ 
-          marginBottom: "15px", 
-          padding: "10px", 
-          backgroundColor: "#f0f9ff",
-          border: "1px solid #bae6fd",
-          borderRadius: "8px",
-          fontSize: "12px"
-        }}>
-          <strong>🔗 Conectando a:</strong><br/>
-          <code style={{ fontSize: "11px", wordBreak: "break-all" }}>
-            {API_BASE_URL}
-          </code>
+        {/* Información de debug */}
+        <div style={{ background: "#e3f2fd", padding: "10px", borderRadius: "5px", marginBottom: "15px", fontSize: "12px" }}>
+          <strong>URL del API:</strong><br/>
+          <code>{API_BASE_URL}</code>
         </div>
 
         {/* Botones de prueba */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
-          <button
-            type="button"
-            onClick={testConnection}
-            style={{
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #d1d5db",
-              backgroundColor: "#f3f4f6",
-              color: "#374151",
-              fontSize: "12px",
-              cursor: "pointer",
-              flex: 1
-            }}
-          >
+        <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+          <button type="button" onClick={testServer} style={{ flex: 1, padding: "8px", background: "#2196f3", color: "white", border: "none", borderRadius: "5px" }}>
             🔍 Probar Servidor
           </button>
-          <button
-            type="button"
-            onClick={testLoginEndpoint}
-            style={{
-              padding: "10px",
-              borderRadius: "8px",
-              border: "1px solid #d1d5db",
-              backgroundColor: "#f3f4f6",
-              color: "#374151",
-              fontSize: "12px",
-              cursor: "pointer",
-              flex: 1
-            }}
-          >
+          <button type="button" onClick={testLoginDirect} style={{ flex: 1, padding: "8px", background: "#4caf50", color: "white", border: "none", borderRadius: "5px" }}>
             🔐 Probar Login
           </button>
         </div>
 
-        <div style={{ marginBottom: "20px" }}>
-          <label style={{ display: "block", marginBottom: "8px", color: "#374151", fontWeight: "500" }}>
-            Usuario:
-          </label>
-          <input
-            type="text"
-            placeholder="Ingresa tu usuario"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "14px 16px",
-              borderRadius: "12px",
-              border: "2px solid #e2e8f0",
-              fontSize: "16px",
-              backgroundColor: "#f8fafc",
-              transition: "all 0.2s ease",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#6366f1";
-              e.target.style.backgroundColor = "#ffffff";
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#e2e8f0";
-              e.target.style.backgroundColor = "#f8fafc";
-            }}
-            required
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Usuario"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          style={{ width: "100%", padding: "10px", marginBottom: "10px", border: "1px solid #ddd", borderRadius: "5px" }}
+          required
+        />
 
-        <div style={{ marginBottom: "25px" }}>
-          <label style={{ display: "block", marginBottom: "8px", color: "#374151", fontWeight: "500" }}>
-            Contraseña:
-          </label>
-          <input
-            type="password"
-            placeholder="Ingresa tu contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "14px 16px",
-              borderRadius: "12px",
-              border: "2px solid #e2e8f0",
-              fontSize: "16px",
-              backgroundColor: "#f8fafc",
-              transition: "all 0.2s ease",
-              outline: "none",
-              boxSizing: "border-box",
-            }}
-            onFocus={(e) => {
-              e.target.style.borderColor = "#6366f1";
-              e.target.style.backgroundColor = "#ffffff";
-            }}
-            onBlur={(e) => {
-              e.target.style.borderColor = "#e2e8f0";
-              e.target.style.backgroundColor = "#f8fafc";
-            }}
-            required
-          />
-        </div>
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          style={{ width: "100%", padding: "10px", marginBottom: "15px", border: "1px solid #ddd", borderRadius: "5px" }}
+          required
+        />
 
-        <button
-          type="submit"
+        <button 
+          type="submit" 
           disabled={loading}
-          style={{
-            width: "100%",
-            padding: "16px",
-            borderRadius: "12px",
-            border: "none",
-            backgroundColor: loading ? "#a0aec0" : "#6366f1",
-            color: "#ffffff",
-            fontSize: "16px",
-            fontWeight: "600",
-            cursor: loading ? "not-allowed" : "pointer",
-            transition: "all 0.2s ease",
-            boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
-            marginBottom: "15px",
-          }}
+          style={{ width: "100%", padding: "10px", background: "#ff5722", color: "white", border: "none", borderRadius: "5px" }}
         >
-          {loading ? "⏳ Conectando..." : "🚀 Iniciar Sesión"}
+          {loading ? "Conectando..." : "Iniciar Sesión"}
         </button>
 
         {error && (
-          <div
-            style={{
-              marginTop: "10px",
-              padding: "12px 16px",
-              borderRadius: "8px",
-              backgroundColor: error.includes("✅") ? "#d1fae5" : "#fee2e2",
-              border: `1px solid ${error.includes("✅") ? "#a7f3d0" : "#fecaca"}`,
-              whiteSpace: 'pre-line'
-            }}
-          >
-            <p
-              style={{
-                color: error.includes("✅") ? "#065f46" : "#dc2626",
-                margin: 0,
-                fontSize: "14px",
-                fontWeight: "500",
-              }}
-            >
-              {error}
-            </p>
+          <div style={{ 
+            marginTop: "15px", 
+            padding: "10px", 
+            background: error.includes("✅") ? "#e8f5e8" : "#ffebee", 
+            color: error.includes("✅") ? "#2e7d32" : "#c62828",
+            borderRadius: "5px",
+            fontSize: "14px"
+          }}>
+            {error}
           </div>
         )}
 
-        {/* Información de debug */}
-        <div style={{ 
-          marginTop: "15px", 
-          padding: "12px", 
-          backgroundColor: "#f8fafc", 
-          borderRadius: "8px",
-          fontSize: "11px",
-          color: "#6b7280"
-        }}>
-          <strong>⚠️ Si persiste el error 404:</strong><br/>
-          1. Verifica que el servidor en Render esté funcionando<br/>
-          2. Confirma que la ruta /api/login exista<br/>
-          3. Revisa la consola del navegador (F12) para más detalles
+        {/* Credenciales de prueba */}
+        <div style={{ marginTop: "15px", fontSize: "12px", color: "#666", textAlign: "center" }}>
+          <p><strong>Credenciales de prueba:</strong></p>
+          <p>Usuario: <code>admin</code></p>
+          <p>Contraseña: <code>123456</code></p>
         </div>
+
       </form>
     </div>
   );
