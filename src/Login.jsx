@@ -20,19 +20,19 @@ export default function Login() {
   const checkServerStatus = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/health`);
-      setServerStatus(response.data.database || "Desconocido");
+      setServerStatus(response.data.database?.status || response.data.database || "Desconocido");
     } catch (err) {
       setServerStatus("Error de conexión");
     }
   };
 
-// En tu componente Login, actualiza la función testConfig:
-const testConfig = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/api/config`);
-    const config = response.data;
-    
-    setError(`
+  // Función para ver configuración detallada
+  const testConfig = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/config`);
+      const config = response.data;
+      
+      setError(`
 🔧 CONFIGURACIÓN DETALLADA:
     
 Supabase URL: ${config.supabase.url}
@@ -47,11 +47,11 @@ Timestamp: ${config.timestamp}
 ${config.supabase.status.includes('❌') ? 
   '• Verifica que la tabla "usuarios" exista en Supabase\n• Revisa las políticas RLS\n• Inserta datos de prueba' : 
   '• La conexión parece correcta, prueba con usuarios reales'}
-    `);
-  } catch (err) {
-    setError("❌ No se puede obtener la configuración");
-  }
-};
+      `);
+    } catch (err) {
+      setError("❌ No se puede obtener la configuración");
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -82,27 +82,50 @@ ${config.supabase.status.includes('❌') ?
     } catch (err) {
       if (err.response?.status === 401) {
         setError("🔐 Usuario o contraseña incorrectos");
+      } else if (err.response?.data?.message) {
+        setError(`❌ Error: ${err.response.data.message}`);
       } else {
-        setError("❌ Error: " + (err.response?.data?.message || err.message));
+        setError("❌ Error de conexión. Verifica la consola para más detalles.");
       }
+      console.error("Error completo:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  // Probar con credenciales de simulación
+  const testSimulation = async () => {
+    setUsername("admin");
+    setPassword("123456");
+    setError("✅ Credenciales de simulación cargadas. Haz clic en Iniciar Sesión.");
+  };
+
+  // Probar conexión directa
+  const testConnection = async () => {
+    try {
+      setError("🔍 Probando conexión con el servidor...");
+      const response = await axios.get(`${API_BASE_URL}/`);
+      setError(`✅ Servidor funcionando: ${response.data.message}`);
+    } catch (err) {
+      setError("❌ No se puede conectar al servidor");
+    }
+  };
+
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", background: "#f5f5f5" }}>
-      <form onSubmit={handleLogin} style={{ background: "white", padding: "25px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", width: "380px" }}>
+      <form onSubmit={handleLogin} style={{ background: "white", padding: "25px", borderRadius: "10px", boxShadow: "0 2px 10px rgba(0,0,0,0.1)", width: "400px" }}>
         
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>🔐 Iniciar Sesión</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#333" }}>🔐 Iniciar Sesión</h2>
 
         {/* Estado del sistema */}
         <div style={{ 
-          background: serverStatus.includes('Conectado') ? "#e8f5e8" : "#fff3cd", 
+          background: serverStatus.includes('✅') ? "#e8f5e8" : 
+                     serverStatus.includes('❌') ? "#ffebee" : "#fff3cd", 
           padding: "10px", 
           borderRadius: "5px", 
           marginBottom: "15px",
-          border: serverStatus.includes('Conectado') ? "1px solid #a5d6a7" : "1px solid #ffeaa7"
+          border: serverStatus.includes('✅') ? "1px solid #a5d6a7" : 
+                 serverStatus.includes('❌') ? "1px solid #ef9a9a" : "1px solid #ffeaa7"
         }}>
           <div style={{ fontSize: "12px", textAlign: "center" }}>
             <strong>Base de datos:</strong> {serverStatus}
@@ -110,50 +133,84 @@ ${config.supabase.status.includes('❌') ?
         </div>
 
         {/* Botones de diagnóstico */}
-        <div style={{ display: "flex", gap: "8px", marginBottom: "15px" }}>
-          <button type="button" onClick={checkServerStatus} style={{ flex: 1, padding: "8px", background: "#2196f3", color: "white", border: "none", borderRadius: "5px", fontSize: "12px" }}>
-            🔄 Actualizar Estado
+        <div style={{ display: "flex", gap: "8px", marginBottom: "15px", flexWrap: "wrap" }}>
+          <button type="button" onClick={checkServerStatus} style={{ padding: "8px", background: "#2196f3", color: "white", border: "none", borderRadius: "5px", fontSize: "12px", flex: 1 }}>
+            🔄 Estado
           </button>
-          <button type="button" onClick={checkConfig} style={{ flex: 1, padding: "8px", background: "#9c27b0", color: "white", border: "none", borderRadius: "5px", fontSize: "12px" }}>
-            ⚙️ Ver Config
+          <button type="button" onClick={testConfig} style={{ padding: "8px", background: "#9c27b0", color: "white", border: "none", borderRadius: "5px", fontSize: "12px", flex: 1 }}>
+            ⚙️ Config
+          </button>
+          <button type="button" onClick={testConnection} style={{ padding: "8px", background: "#4caf50", color: "white", border: "none", borderRadius: "5px", fontSize: "12px", flex: 1 }}>
+            🌐 Conexión
+          </button>
+          <button type="button" onClick={testSimulation} style={{ padding: "8px", background: "#ff9800", color: "white", border: "none", borderRadius: "5px", fontSize: "12px", flex: 1 }}>
+            🧪 Simulación
           </button>
         </div>
 
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{ width: "100%", padding: "12px", marginBottom: "10px", border: "1px solid #ddd", borderRadius: "5px" }}
-          required
-        />
+        <div style={{ marginBottom: "15px" }}>
+          <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", color: "#555" }}>Usuario:</label>
+          <input
+            type="text"
+            placeholder="Usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "5px", fontSize: "14px" }}
+            required
+          />
+        </div>
 
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", padding: "12px", marginBottom: "15px", border: "1px solid #ddd", borderRadius: "5px" }}
-          required
-        />
+        <div style={{ marginBottom: "20px" }}>
+          <label style={{ display: "block", marginBottom: "5px", fontSize: "14px", color: "#555" }}>Contraseña:</label>
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ width: "100%", padding: "12px", border: "1px solid #ddd", borderRadius: "5px", fontSize: "14px" }}
+            required
+          />
+        </div>
 
         <button 
           type="submit" 
           disabled={loading}
-          style={{ width: "100%", padding: "12px", background: loading ? "#ccc" : "#ff5722", color: "white", border: "none", borderRadius: "5px" }}
+          style={{ 
+            width: "100%", 
+            padding: "12px", 
+            background: loading ? "#ccc" : "#ff5722", 
+            color: "white", 
+            border: "none", 
+            borderRadius: "5px",
+            fontSize: "16px",
+            fontWeight: "600",
+            cursor: loading ? "not-allowed" : "pointer"
+          }}
         >
           {loading ? "🔄 Conectando..." : "🚀 Iniciar Sesión"}
         </button>
 
         {error && (
-          <div style={{ marginTop: "15px", padding: "10px", background: "#ffebee", color: "#c62828", borderRadius: "5px", fontSize: "14px", whiteSpace: 'pre-wrap' }}>
+          <div style={{ 
+            marginTop: "15px", 
+            padding: "10px", 
+            background: error.includes("✅") ? "#e8f5e8" : "#ffebee", 
+            color: error.includes("✅") ? "#2e7d32" : "#c62828",
+            borderRadius: "5px", 
+            fontSize: "14px", 
+            whiteSpace: 'pre-wrap',
+            border: error.includes("✅") ? "1px solid #a5d6a7" : "1px solid #ef9a9a"
+          }}>
             {error}
           </div>
         )}
 
-        {/* Información */}
+        {/* Información de ayuda */}
         <div style={{ marginTop: "15px", fontSize: "11px", color: "#666", textAlign: "center" }}>
-          <p>Si la BD muestra "No configurado", configura las variables en Render</p>
+          <p><strong>Modo de uso:</strong></p>
+          <p>• Si la BD está en simulación: usa <code>admin/123456</code></p>
+          <p>• Si la BD está conectada: usa tus usuarios reales</p>
+          <p>• Haz clic en 🧪 Simulación para cargar credenciales de prueba</p>
         </div>
 
       </form>
