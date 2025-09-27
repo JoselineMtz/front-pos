@@ -9,7 +9,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // URL de tu backend en Render
+  // ✅ URL CORREGIDA: Usar Render en lugar de Vercel
   const API_BASE_URL = "https://pos-sales-yo.onrender.com/api";
 
   const handleLogin = async (e) => {
@@ -17,9 +17,11 @@ export default function Login() {
     setError("");
     setLoading(true);
 
+    console.log("🔐 Intentando login en:", `${API_BASE_URL}/login`);
+
     try {
       const res = await axios.post(
-        `${API_BASE_URL}/login`,
+        `${API_BASE_URL}/login`,  // ✅ URL correcta
         {
           username,
           password,
@@ -31,6 +33,8 @@ export default function Login() {
           }
         }
       );
+
+      console.log("✅ Respuesta del servidor:", res.data);
 
       const { token, user, message } = res.data;
 
@@ -53,27 +57,34 @@ export default function Login() {
       } else if (user.rol === "vendedor") {
         navigate("/vendedor");
       } else {
-        // Rol por defecto para otros roles
         navigate("/dashboard");
       }
     } catch (err) {
-      console.error("Error en login:", err);
+      console.error("❌ Error completo en login:", err);
       
-      if (axios.isAxiosError(err) && err.response) {
-        // Error del servidor (401, 500, etc.)
-        if (err.response.status === 401) {
-          setError("Usuario o contraseña incorrectos");
-        } else if (err.response.status === 400) {
-          setError("Datos incompletos: usuario y contraseña son requeridos");
-        } else if (err.response.status === 500) {
-          setError("Error del servidor. Intenta nuevamente.");
+      if (axios.isAxiosError(err)) {
+        if (err.response) {
+          // Error del servidor (404, 401, 500, etc.)
+          if (err.response.status === 404) {
+            setError("❌ Ruta no encontrada (404). Verifica la URL del API.");
+          } else if (err.response.status === 401) {
+            setError("🔐 Usuario o contraseña incorrectos");
+          } else if (err.response.status === 500) {
+            setError("⚙️ Error del servidor. Intenta nuevamente.");
+          } else {
+            setError(err.response.data.message || `Error ${err.response.status}`);
+          }
+        } else if (err.request) {
+          // No hubo respuesta del servidor
+          setError("🌐 No hay respuesta del servidor. Verifica:");
+          setError(prev => prev + "\n• Que el servidor esté funcionando");
+          setError(prev => prev + "\n• Que la URL sea correcta");
+          setError(prev => prev + "\n• Tu conexión a internet");
         } else {
-          setError(err.response.data.message || `Error ${err.response.status}`);
+          setError("📱 Error en la configuración: " + err.message);
         }
-      } else if (err.code === 'ECONNABORTED') {
-        setError("Tiempo de espera agotado. Verifica tu conexión.");
       } else {
-        setError("Error de conexión. Verifica que el servidor esté funcionando.");
+        setError("❌ Error inesperado: " + err.message);
       }
     } finally {
       setLoading(false);
@@ -84,10 +95,32 @@ export default function Login() {
   const testConnection = async () => {
     try {
       setError("🔍 Probando conexión con el servidor...");
-      const response = await axios.get(API_BASE_URL.replace('/api', '/health'));
-      setError(`✅ Servidor conectado: ${response.data.message}`);
+      
+      // Probar la ruta principal primero
+      const healthResponse = await axios.get(API_BASE_URL.replace('/api', ''));
+      console.log("Health check:", healthResponse.data);
+      
+      setError(`✅ Servidor conectado: ${healthResponse.data.message}`);
     } catch (err) {
-      setError("❌ No se puede conectar al servidor");
+      console.error("Error en test de conexión:", err);
+      
+      if (axios.isAxiosError(err) && err.response) {
+        setError(`❌ Error ${err.response.status}: ${err.response.statusText}`);
+      } else {
+        setError("❌ No se puede conectar al servidor. Verifica la URL.");
+      }
+    }
+  };
+
+  // Probar ruta de login específica
+  const testLoginEndpoint = async () => {
+    try {
+      setError("🔍 Probando endpoint de login...");
+      
+      const response = await axios.get(`${API_BASE_URL}/health`);
+      setError(`✅ Endpoint funcionando: ${response.data.message}`);
+    } catch (err) {
+      setError("❌ Endpoint no disponible. Verifica las rutas del API.");
     }
   };
 
@@ -107,7 +140,7 @@ export default function Login() {
         style={{
           display: "flex",
           flexDirection: "column",
-          width: 400,
+          width: 420,
           padding: 30,
           borderRadius: "16px",
           boxShadow: "0 10px 30px rgba(0, 0, 0, 0.12)",
@@ -122,36 +155,61 @@ export default function Login() {
             color: "#1f2937",
             fontSize: "28px",
             fontWeight: "600",
-            letterSpacing: "-0.5px",
           }}
         >
           Iniciar Sesión - POS
         </h2>
 
-        {/* Botón de prueba de conexión */}
-        <button
-          type="button"
-          onClick={testConnection}
-          style={{
-            padding: "10px",
-            marginBottom: "15px",
-            borderRadius: "8px",
-            border: "1px solid #d1d5db",
-            backgroundColor: "#f3f4f6",
-            color: "#374151",
-            fontSize: "14px",
-            cursor: "pointer",
-            transition: "all 0.2s ease",
-          }}
-          onMouseOver={(e) => {
-            e.target.style.backgroundColor = "#e5e7eb";
-          }}
-          onMouseOut={(e) => {
-            e.target.style.backgroundColor = "#f3f4f6";
-          }}
-        >
-          🔍 Probar Conexión con Servidor
-        </button>
+        {/* Información de conexión */}
+        <div style={{ 
+          marginBottom: "15px", 
+          padding: "10px", 
+          backgroundColor: "#f0f9ff",
+          border: "1px solid #bae6fd",
+          borderRadius: "8px",
+          fontSize: "12px"
+        }}>
+          <strong>🔗 Conectando a:</strong><br/>
+          <code style={{ fontSize: "11px", wordBreak: "break-all" }}>
+            {API_BASE_URL}
+          </code>
+        </div>
+
+        {/* Botones de prueba */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+          <button
+            type="button"
+            onClick={testConnection}
+            style={{
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #d1d5db",
+              backgroundColor: "#f3f4f6",
+              color: "#374151",
+              fontSize: "12px",
+              cursor: "pointer",
+              flex: 1
+            }}
+          >
+            🔍 Probar Servidor
+          </button>
+          <button
+            type="button"
+            onClick={testLoginEndpoint}
+            style={{
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #d1d5db",
+              backgroundColor: "#f3f4f6",
+              color: "#374151",
+              fontSize: "12px",
+              cursor: "pointer",
+              flex: 1
+            }}
+          >
+            🔐 Probar Login
+          </button>
+        </div>
 
         <div style={{ marginBottom: "20px" }}>
           <label style={{ display: "block", marginBottom: "8px", color: "#374151", fontWeight: "500" }}>
@@ -234,20 +292,6 @@ export default function Login() {
             boxShadow: "0 4px 12px rgba(99, 102, 241, 0.3)",
             marginBottom: "15px",
           }}
-          onMouseOver={(e) => {
-            if (!loading) {
-              e.target.style.backgroundColor = "#4f46e5";
-              e.target.style.transform = "translateY(-1px)";
-              e.target.style.boxShadow = "0 6px 16px rgba(79, 70, 229, 0.4)";
-            }
-          }}
-          onMouseOut={(e) => {
-            if (!loading) {
-              e.target.style.backgroundColor = "#6366f1";
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "0 4px 12px rgba(99, 102, 241, 0.3)";
-            }
-          }}
         >
           {loading ? "⏳ Conectando..." : "🚀 Iniciar Sesión"}
         </button>
@@ -260,6 +304,7 @@ export default function Login() {
               borderRadius: "8px",
               backgroundColor: error.includes("✅") ? "#d1fae5" : "#fee2e2",
               border: `1px solid ${error.includes("✅") ? "#a7f3d0" : "#fecaca"}`,
+              whiteSpace: 'pre-line'
             }}
           >
             <p
@@ -268,7 +313,6 @@ export default function Login() {
                 margin: 0,
                 fontSize: "14px",
                 fontWeight: "500",
-                textAlign: "center",
               }}
             >
               {error}
@@ -276,17 +320,19 @@ export default function Login() {
           </div>
         )}
 
-        {/* Información del sistema */}
-        <div style={{ marginTop: "20px", padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px" }}>
-          <p style={{ fontSize: "12px", color: "#6b7280", margin: "0 0 8px 0", textAlign: "center" }}>
-            <strong>Sistema POS - Base de Datos Real</strong>
-          </p>
-          <p style={{ fontSize: "11px", color: "#6b7280", margin: 0, textAlign: "center" }}>
-            Conectado a: {API_BASE_URL}
-          </p>
-          <p style={{ fontSize: "11px", color: "#6b7280", margin: "8px 0 0 0", textAlign: "center" }}>
-            Usa las credenciales de tu base de datos PostgreSQL
-          </p>
+        {/* Información de debug */}
+        <div style={{ 
+          marginTop: "15px", 
+          padding: "12px", 
+          backgroundColor: "#f8fafc", 
+          borderRadius: "8px",
+          fontSize: "11px",
+          color: "#6b7280"
+        }}>
+          <strong>⚠️ Si persiste el error 404:</strong><br/>
+          1. Verifica que el servidor en Render esté funcionando<br/>
+          2. Confirma que la ruta /api/login exista<br/>
+          3. Revisa la consola del navegador (F12) para más detalles
         </div>
       </form>
     </div>
