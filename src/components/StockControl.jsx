@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import './StockControl.css';
+
+// ✅ Define la URL de tu API usando VITE_API_URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
 
 // Componente Modal de Permisos Insuficientes
 const PermissionDeniedModal = ({ show, onClose, requiredPermission, currentUser }) => {
@@ -408,11 +410,7 @@ const StockControl = () => {
     const [requiredPermission, setRequiredPermission] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
 
-    // ✅ URL base corregida - IMPORTANTE: Verifica que estas rutas sean correctas
-    const API_BASE_URL = process.env.NODE_ENV === 'production' 
-        ? '/api' 
-        : 'http://localhost:4000/api';
-    
+    // ✅ Configuración corregida - Usa VITE_API_URL y agrega /api a todas las rutas
     const token = localStorage.getItem('token');
     const config = {
         headers: {
@@ -486,7 +484,8 @@ const StockControl = () => {
     const fetchProducts = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await axios.get(`${API_BASE_URL}api/stock/products`, config);
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products
+            const response = await axios.get(`${API_BASE_URL}/api/stock/products`, config);
             const sortedProducts = response.data.sort((a, b) => b.id - a.id);
             setProducts(sortedProducts);
             setFilteredProducts(sortedProducts);
@@ -502,10 +501,11 @@ const StockControl = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [config, API_BASE_URL]);
+    }, [config]);
 
     const fetchCategories = useCallback(async () => {
         try {
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/categories
             const response = await axios.get(`${API_BASE_URL}/api/stock/categories`, config);
             setCategories(response.data);
         } catch (error) {
@@ -518,7 +518,7 @@ const StockControl = () => {
                 showMessage('Error al cargar categorías. Verifica tu conexión.', 'error');
             }
         }
-    }, [config, API_BASE_URL]);
+    }, [config]);
 
     // Búsqueda por SKU - Se ejecuta cuando el campo pierde el foco
     const handleSkuSearch = useCallback(async () => {
@@ -527,6 +527,7 @@ const StockControl = () => {
 
         setIsSearching(true);
         try {
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/by-sku/
             const response = await axios.get(`${API_BASE_URL}/api/stock/products/by-sku/${skuToSearch}`, config);
             const productFound = response.data;
 
@@ -563,7 +564,7 @@ const StockControl = () => {
         } finally {
             setIsSearching(false);
         }
-    }, [formData.sku, config, API_BASE_URL]);
+    }, [formData.sku, config]);
 
     // Mostrar mensajes
     const showMessage = useCallback((message, type) => {
@@ -596,6 +597,7 @@ const StockControl = () => {
                 purchase_price: parseFloat(formData.price) * 0.7
             };
 
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/upsert
             await axios.post(`${API_BASE_URL}/api/stock/products/upsert`, productToSave, config);
 
             const isUpdate = products.some(p => p.sku === productToSave.sku);
@@ -625,7 +627,7 @@ const StockControl = () => {
                 showMessage(errorMessage, 'error');
             }
         }
-    }, [formData, products, currentUserId, config, showMessage, clearForm, fetchProducts, API_BASE_URL]);
+    }, [formData, products, currentUserId, config, showMessage, clearForm, fetchProducts]);
 
     const handleEditClick = useCallback((product) => {
         setEditingProduct({
@@ -659,6 +661,7 @@ const StockControl = () => {
                 purchase_price: parseFloat(editingProduct.price) * 0.7
             };
 
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/upsert
             await axios.post(`${API_BASE_URL}/api/stock/products/upsert`, productToUpdate, config);
             setEditingProduct(null);
             showMessage('Producto actualizado con éxito', 'updated');
@@ -673,7 +676,7 @@ const StockControl = () => {
                 showMessage('Error al actualizar el producto. Por favor, inténtalo de nuevo.', 'error');
             }
         }
-    }, [editingProduct, currentUserId, config, showMessage, fetchProducts, API_BASE_URL]);
+    }, [editingProduct, currentUserId, config, showMessage, fetchProducts]);
 
     const handleCancelEdit = useCallback(() => {
         setEditingProduct(null);
@@ -688,6 +691,7 @@ const StockControl = () => {
         if (!productToDelete) return;
 
         try {
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/
             await axios.delete(`${API_BASE_URL}/api/stock/products/${productToDelete.id}`, config);
             fetchProducts();
             setShowDeleteProductModal(false);
@@ -702,7 +706,7 @@ const StockControl = () => {
                 showMessage('Error al eliminar el producto. Intenta de nuevo.', 'error');
             }
         }
-    }, [productToDelete, config, fetchProducts, API_BASE_URL]);
+    }, [productToDelete, config, fetchProducts]);
 
     const handleCancelDeleteProduct = useCallback(() => {
         setShowDeleteProductModal(false);
@@ -720,6 +724,7 @@ const StockControl = () => {
             return;
         }
         try {
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/categories
             await axios.post(`${API_BASE_URL}/api/stock/categories`, { nombre: newCategoryName }, config);
             showMessage(`Categoría "${newCategoryName}" agregada con éxito`, 'added');
             setNewCategoryName('');
@@ -728,7 +733,7 @@ const StockControl = () => {
             console.error('Error adding category:', error);
             showMessage('Error al agregar la categoría. Por favor, inténtalo de nuevo.', 'error');
         }
-    }, [newCategoryName, config, fetchCategories, API_BASE_URL]);
+    }, [newCategoryName, config, fetchCategories]);
 
     const handleToggleCategoryManagement = useCallback(() => {
         setShowCategoryManagement(prev => !prev);
@@ -741,6 +746,7 @@ const StockControl = () => {
 
     const handleDeleteCategory = useCallback(async () => {
         try {
+            // ✅ URL corregida: usa API_BASE_URL + /api/stock/categories/
             await axios.delete(`${API_BASE_URL}/api/stock/categories/${categoryToDelete.id}`, config);
             setShowDeleteCategoryModal(false);
             setCategoryToDelete(null);
@@ -754,7 +760,7 @@ const StockControl = () => {
                 showMessage('Error al eliminar la categoría. Intenta de nuevo.', 'error');
             }
         }
-    }, [categoryToDelete, config, fetchCategories, API_BASE_URL]);
+    }, [categoryToDelete, config, fetchCategories]);
 
     const handleCancelDeleteCategory = useCallback(() => {
         setShowDeleteCategoryModal(false);
