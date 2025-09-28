@@ -319,16 +319,199 @@ const ProductList = ({
     </>
 );
 
+// Componente para el SuperStock (Registro de Compras)
+const SuperStockForm = ({
+    superStockData,
+    categories,
+    onSuperStockChange,
+    onSkuSearch,
+    onAddToTempList,
+    existingProduct,
+    purchasePrice,
+    profitPercentage,
+    calculatedProfitPercentage,
+    calculationMode,
+    onPurchasePriceChange,
+    onProfitPercentageChange,
+    onCalculationModeChange,
+    addedProducts,
+    onFinalizeStock,
+    isFinalizing,
+    onShowAllProducts,
+    tempProductsCount
+}) => {
+    return (
+        <div className="form-card super-stock-form">
+            <h4>Registro de Compras (Super Stock)</h4>
+            
+            <div className="posItem">
+                <input
+                    type="text"
+                    placeholder="SKU (Buscará automáticamente)"
+                    value={superStockData.sku}
+                    onChange={(e) => onSuperStockChange('sku', e.target.value)}
+                    onBlur={onSkuSearch}
+                />
+            </div>
+            
+            <div className="posItem">
+                <input
+                    type="text"
+                    placeholder="Nombre"
+                    value={superStockData.name}
+                    onChange={(e) => onSuperStockChange('name', e.target.value)}
+                />
+            </div>
+            
+            <div className="posItem">
+                <input
+                    type="text"
+                    placeholder="Descripción"
+                    value={superStockData.description}
+                    onChange={(e) => onSuperStockChange('description', e.target.value)}
+                />
+            </div>
+            
+            <div className="posItem">
+                <div className="input-group">
+                    <input
+                        type="number"
+                        placeholder="Cantidad"
+                        value={superStockData.stock}
+                        onChange={(e) => onSuperStockChange('stock', e.target.value)}
+                    />
+                    <select
+                        value={superStockData.stockUnit}
+                        onChange={(e) => onSuperStockChange('stockUnit', e.target.value)}
+                    >
+                        <option value="Unidad">Unidad</option>
+                        <option value="Kilos">Kilos</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div className="posItem">
+                <select
+                    value={superStockData.categoria_id || ''}
+                    onChange={(e) => onSuperStockChange('categoria_id', e.target.value === '' ? null : parseInt(e.target.value))}
+                >
+                    <option value="">Selecciona una categoría</option>
+                    {categories.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+                </select>
+            </div>
+            
+            {/* Calculadora de Precios */}
+            <div className="price-calculator">
+                <h5>Calculadora de Precios</h5>
+                
+                <div className="posItem">
+                    <input
+                        type="number"
+                        placeholder="Precio de Compra"
+                        value={purchasePrice}
+                        onChange={onPurchasePriceChange}
+                        step="0.01"
+                    />
+                </div>
+                
+                <div className="calculation-mode">
+                    <label>
+                        <input
+                            type="radio"
+                            value="price"
+                            checked={calculationMode === 'price'}
+                            onChange={onCalculationModeChange}
+                        />
+                        Calcular Precio de Venta
+                    </label>
+                    <label>
+                        <input
+                            type="radio"
+                            value="profit"
+                            checked={calculationMode === 'profit'}
+                            onChange={onCalculationModeChange}
+                        />
+                        Calcular Margen de Ganancia
+                    </label>
+                </div>
+                
+                {calculationMode === 'price' ? (
+                    <div className="posItem">
+                        <input
+                            type="number"
+                            placeholder="% Ganancia"
+                            value={profitPercentage}
+                            onChange={onProfitPercentageChange}
+                            step="0.01"
+                        />
+                    </div>
+                ) : (
+                    <div className="posItem">
+                        <input
+                            type="number"
+                            placeholder="Precio de Venta"
+                            value={superStockData.price}
+                            onChange={(e) => onSuperStockChange('price', e.target.value)}
+                            step="0.01"
+                        />
+                    </div>
+                )}
+                
+                <div className="calculation-results">
+                    {calculationMode === 'price' ? (
+                        <p>Precio de Venta: ${superStockData.price || 0}</p>
+                    ) : (
+                        <p>Margen de Ganancia: {calculatedProfitPercentage}%</p>
+                    )}
+                </div>
+            </div>
+            
+            <button className="button" onClick={onAddToTempList}>
+                {existingProduct ? "Añadir Stock a Lista" : "Añadir Nuevo Producto a Lista"}
+            </button>
+            
+            {/* Lista Temporal de Productos */}
+            {addedProducts.length > 0 && (
+                <div className="temp-products-list">
+                    <h5>Productos en Lista Temporal ({tempProductsCount})</h5>
+                    <div className="products-scroll-container">
+                        <ul className="product-list">
+                            {addedProducts.slice(0, 4).map((p, i) => (
+                                <li key={i} className="product-item-card">
+                                    <p><strong>SKU:</strong> {p.sku}</p>
+                                    <p><strong>Nombre:</strong> {p.name}</p>
+                                    <p><strong>Cantidad a agregar:</strong> {p.added_stock} {p.stockUnit}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                    {addedProducts.length > 4 && (
+                        <button className="button" onClick={onShowAllProducts}>
+                            Ver todos ({addedProducts.length})
+                        </button>
+                    )}
+                    <button className="button finalize-button" onClick={onFinalizeStock} disabled={isFinalizing}>
+                        {isFinalizing ? 'Guardando...' : 'Finalizar y Guardar en BD'}
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
 // Componente para modales
 const Modals = ({
     showDeleteCategoryModal,
     categoryToDelete,
     showDeleteProductModal,
     productToDelete,
+    showAllProducts,
+    addedProducts,
     onCancelDeleteCategory,
     onDeleteCategory,
     onCancelDeleteProduct,
-    onDeleteProductConfirmed
+    onDeleteProductConfirmed,
+    onCloseAllProducts
 }) => (
     <>
         {showDeleteCategoryModal && (
@@ -366,12 +549,47 @@ const Modals = ({
                 </div>
             </div>
         )}
+
+        {showAllProducts && (
+            <div className="modal-overlay">
+                <div className="modal-content wide-modal">
+                    <h4>Todos los Productos en Lista Temporal</h4>
+                    <div className="modal-products-scroll">
+                        <table className="table">
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Nombre</th>
+                                    <th>Cantidad a Agregar</th>
+                                    <th>Precio Compra</th>
+                                    <th>Precio Venta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {addedProducts.map((p, i) => (
+                                    <tr key={i}>
+                                        <td>{p.sku}</td>
+                                        <td>{p.name}</td>
+                                        <td>{p.added_stock} {p.stockUnit}</td>
+                                        <td>${p.purchase_price?.toFixed(2)}</td>
+                                        <td>${p.price?.toFixed(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="modalButtons">
+                        <button className="button" onClick={onCloseAllProducts}>Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        )}
     </>
 );
 
 // Componente principal
 const StockControl = () => {
-    // Estados principales
+    // Estados principales del StockControl original
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [newCategoryName, setNewCategoryName] = useState('');
@@ -386,7 +604,7 @@ const StockControl = () => {
         categoria_id: null,
     });
 
-    // Estados de UI
+    // Estados de UI del StockControl original
     const [currentUserId] = useState(1);
     const [showFullStock, setShowFullStock] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -402,12 +620,28 @@ const StockControl = () => {
     const [lastSkuSearched, setLastSkuSearched] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     
-    // Nuevos estados para manejo de permisos
+    // Estados para permisos
     const [showPermissionModal, setShowPermissionModal] = useState(false);
     const [requiredPermission, setRequiredPermission] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
 
-    // ✅ URL base corregida - usa rutas relativas para producción
+    // ✅ Estados del SuperStock
+    const [superStockData, setSuperStockData] = useState({
+        sku: '', name: '', description: '', stock: 0, stockUnit: 'Unidad', categoria_id: null, price: 0
+    });
+    const [existingProduct, setExistingProduct] = useState(null);
+    const [purchasePrice, setPurchasePrice] = useState('');
+    const [profitPercentage, setProfitPercentage] = useState('');
+    const [calculatedProfitPercentage, setCalculatedProfitPercentage] = useState('');
+    const [calculationMode, setCalculationMode] = useState('price');
+    const [addedProducts, setAddedProducts] = useState([]);
+    const [showAllProducts, setShowAllProducts] = useState(false);
+    const [isFinalizing, setIsFinalizing] = useState(false);
+
+    // Clave para localStorage del SuperStock
+    const localStorageKey = `superstock_temp_products_${currentUserId}`;
+
+    // ✅ URL base corregida
     const API_URL = process.env.NODE_ENV === 'production' 
         ? '/api/stock' 
         : 'http://localhost:4000/api/stock';
@@ -423,9 +657,18 @@ const StockControl = () => {
     useEffect(() => {
         fetchProducts();
         fetchCategories();
-        // Obtener información del usuario actual desde el token
         const tokenData = token ? JSON.parse(atob(token.split('.')[1])) : null;
         setCurrentUser(tokenData);
+        
+        // Cargar productos temporales del SuperStock
+        try {
+            const stored = localStorage.getItem(localStorageKey);
+            if (stored) {
+                setAddedProducts(JSON.parse(stored));
+            }
+        } catch (error) {
+            console.error('Error al leer productos temporales de localStorage:', error);
+        }
     }, [token]);
 
     useEffect(() => {
@@ -438,13 +681,36 @@ const StockControl = () => {
         setFilteredProducts(results);
     }, [searchTerm, products]);
 
+    // 🔹 Guardar productos del SuperStock en localStorage
+    useEffect(() => {
+        localStorage.setItem(localStorageKey, JSON.stringify(addedProducts));
+    }, [addedProducts, localStorageKey]);
+
+    // 🔹 Calculadora de precios del SuperStock
+    useEffect(() => {
+        const price = parseFloat(purchasePrice);
+        if (calculationMode === 'price') {
+            const profit = parseFloat(profitPercentage);
+            if (!isNaN(price) && !isNaN(profit)) {
+                setSuperStockData(prev => ({ ...prev, price: price * (1 + profit / 100) }));
+            }
+        } else {
+            const salePrice = parseFloat(superStockData.price);
+            if (!isNaN(price) && !isNaN(salePrice) && price > 0) {
+                setCalculatedProfitPercentage((((salePrice - price) / price) * 100).toFixed(2));
+            } else {
+                setCalculatedProfitPercentage('');
+            }
+        }
+    }, [purchasePrice, profitPercentage, superStockData.price, calculationMode]);
+
     // Función para mostrar modal de permisos insuficientes
     const showPermissionDenied = useCallback((permission) => {
         setRequiredPermission(permission);
         setShowPermissionModal(true);
     }, []);
 
-    // Función para manejar cambios en el formulario
+    // Funciones del StockControl original (se mantienen igual)
     const handleFormChange = useCallback((e) => {
         const { name, value } = e.target;
         setFormData(prevData => ({
@@ -453,7 +719,6 @@ const StockControl = () => {
         }));
     }, []);
 
-    // Función para manejar cambios en la edición
     const handleEditChange = useCallback((field, value) => {
         setEditingProduct(prev => ({
             ...prev,
@@ -461,7 +726,6 @@ const StockControl = () => {
         }));
     }, []);
 
-    // Función para limpiar el formulario
     const clearForm = useCallback(() => {
         setFormData({
             sku: '',
@@ -475,7 +739,6 @@ const StockControl = () => {
         setLastSkuSearched('');
     }, []);
 
-    // Funciones para obtener datos
     const fetchProducts = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -505,7 +768,6 @@ const StockControl = () => {
         }
     }, [config, API_URL]);
 
-    // Búsqueda por SKU - Se ejecuta cuando el campo pierde el foco
     const handleSkuSearch = useCallback(async () => {
         const skuToSearch = formData.sku.trim();
         if (!skuToSearch) return;
@@ -556,7 +818,6 @@ const StockControl = () => {
         }
     }, [formData.sku, config, API_URL]);
 
-    // Mostrar mensajes
     const showMessage = useCallback((message, type) => {
         setSuccessMessage(message);
         setActionType(type);
@@ -567,7 +828,6 @@ const StockControl = () => {
         }, 3000);
     }, []);
 
-    // Gestión de productos
     const handleAddOrUpdateProduct = useCallback(async () => {
         if (!formData.sku || !formData.name || formData.price === '' || formData.stock === '') {
             showMessage('Por favor, completa todos los campos obligatorios: SKU, Nombre, Precio y Cantidad.', 'error');
@@ -616,6 +876,113 @@ const StockControl = () => {
         }
     }, [formData, products, currentUserId, config, showMessage, clearForm, fetchProducts, API_URL]);
 
+    // 🔹 Funciones del SuperStock
+    const handleSuperStockChange = useCallback((field, value) => {
+        setSuperStockData(prev => ({ ...prev, [field]: value }));
+    }, []);
+
+    const handleSuperStockSkuSearch = useCallback(async () => {
+        const skuToSearch = superStockData.sku.trim();
+        if (!skuToSearch) return;
+
+        try {
+            const response = await axios.get(`${API_URL}/products/by-sku/${skuToSearch}`, config);
+            const product = response.data;
+            setExistingProduct(product);
+            setSuperStockData(prev => ({
+                ...prev,
+                name: product.name,
+                description: product.description,
+                stock: 0,
+                stockUnit: product.stock_unit,
+                categoria_id: product.categoria_id,
+                price: product.price
+            }));
+            setPurchasePrice(product.purchase_price || '');
+            showMessage(`Producto '${product.name}' encontrado. Se actualizará el stock.`, 'info');
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                setExistingProduct(null);
+                showMessage('SKU no encontrado. Se creará como un producto nuevo.', 'info');
+            } else {
+                console.error('Error buscando producto:', error);
+                showMessage('Error al buscar producto.', 'error');
+            }
+        }
+    }, [superStockData.sku, config, API_URL]);
+
+    const resetSuperStockForm = useCallback(() => {
+        setSuperStockData({ sku: '', name: '', description: '', stock: 0, stockUnit: 'Unidad', categoria_id: null, price: 0 });
+        setPurchasePrice('');
+        setProfitPercentage('');
+        setCalculatedProfitPercentage('');
+        setExistingProduct(null);
+    }, []);
+
+    const handleAddToTempList = useCallback(() => {
+        if (!superStockData.sku || !superStockData.name || !superStockData.stock || !purchasePrice) {
+            showMessage('SKU, Nombre, Cantidad y Precio de Compra son requeridos.', 'error');
+            return;
+        }
+
+        const productData = {
+            ...superStockData,
+            purchase_price: parseFloat(purchasePrice) || 0,
+            added_stock: parseFloat(superStockData.stock) || 0,
+        };
+
+        const productIndex = addedProducts.findIndex(p => p.sku === productData.sku);
+
+        if (productIndex > -1) {
+            const updatedProducts = [...addedProducts];
+            updatedProducts[productIndex].added_stock += productData.added_stock;
+            setAddedProducts(updatedProducts);
+        } else {
+            setAddedProducts(prev => [...prev, productData]);
+        }
+
+        showMessage(`'${productData.name}' agregado a la lista temporal.`, 'info');
+        resetSuperStockForm();
+    }, [superStockData, purchasePrice, addedProducts, resetSuperStockForm]);
+
+    const handleFinalizeStock = useCallback(async () => {
+        if (addedProducts.length === 0) {
+            showMessage('No hay productos en la lista para finalizar.', 'info');
+            return;
+        }
+        setIsFinalizing(true);
+        showMessage('Finalizando y guardando en la base de datos...', 'info');
+
+        const upsertPromises = addedProducts.map(product => {
+            const payload = {
+                sku: product.sku,
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                stock: product.added_stock,
+                stockUnit: product.stockUnit,
+                categoria_id: product.categoria_id,
+                purchase_price: product.purchase_price
+            };
+            return axios.post(`${API_URL}/products/upsert`, payload, config);
+        });
+
+        try {
+            await Promise.all(upsertPromises);
+            setAddedProducts([]);
+            localStorage.removeItem(localStorageKey);
+            showMessage('¡Stock actualizado exitosamente en la base de datos!', 'success');
+            fetchProducts(); // Actualizar la lista de productos
+        } catch (error) {
+            console.error('Error al finalizar stock:', error);
+            const errorMsg = error.response?.data?.message || 'Ocurrió un error al guardar.';
+            showMessage(`Error: ${errorMsg}. Revisa los permisos o la consola.`, 'error');
+        } finally {
+            setIsFinalizing(false);
+        }
+    }, [addedProducts, config, API_URL, fetchProducts, localStorageKey]);
+
+    // Resto de funciones del StockControl (se mantienen igual)
     const handleEditClick = useCallback((product) => {
         setEditingProduct({
             ...product,
@@ -698,7 +1065,6 @@ const StockControl = () => {
         setProductToDelete(null);
     }, []);
 
-    // Gestión de categorías
     const handleNewCategoryChange = useCallback((e) => {
         setNewCategoryName(e.target.value);
     }, []);
@@ -750,7 +1116,6 @@ const StockControl = () => {
         setCategoryToDelete(null);
     }, []);
 
-    // Utilidades
     const formatStock = useCallback((stock) => Number(stock).toLocaleString('es-CL'), []);
 
     // Renderizado principal
@@ -795,10 +1160,13 @@ const StockControl = () => {
                         categoryToDelete={categoryToDelete}
                         showDeleteProductModal={showDeleteProductModal}
                         productToDelete={productToDelete}
+                        showAllProducts={showAllProducts}
+                        addedProducts={addedProducts}
                         onCancelDeleteCategory={handleCancelDeleteCategory}
                         onDeleteCategory={handleDeleteCategory}
                         onCancelDeleteProduct={handleCancelDeleteProduct}
                         onDeleteProductConfirmed={handleDeleteProductConfirmed}
+                        onCloseAllProducts={() => setShowAllProducts(false)}
                     />
                     <PermissionDeniedModal
                         show={showPermissionModal}
@@ -828,6 +1196,7 @@ const StockControl = () => {
                         {successMessage}
                     </div>
                 )}
+                
                 <div className="posCardsContainer">
                     <ProductForm
                         formData={formData}
@@ -837,6 +1206,7 @@ const StockControl = () => {
                         onSkuSearch={handleSkuSearch}
                         onAddOrUpdateProduct={handleAddOrUpdateProduct}
                     />
+                    
                     <CategoryForm
                         newCategoryName={newCategoryName}
                         categories={categories}
@@ -846,7 +1216,30 @@ const StockControl = () => {
                         onToggleCategoryManagement={handleToggleCategoryManagement}
                         onConfirmDeleteCategory={handleConfirmDeleteCategory}
                     />
+                    
+                    {/* 🔹 Nuevo componente SuperStock */}
+                    <SuperStockForm
+                        superStockData={superStockData}
+                        categories={categories}
+                        onSuperStockChange={handleSuperStockChange}
+                        onSkuSearch={handleSuperStockSkuSearch}
+                        onAddToTempList={handleAddToTempList}
+                        existingProduct={existingProduct}
+                        purchasePrice={purchasePrice}
+                        profitPercentage={profitPercentage}
+                        calculatedProfitPercentage={calculatedProfitPercentage}
+                        calculationMode={calculationMode}
+                        onPurchasePriceChange={(e) => setPurchasePrice(e.target.value)}
+                        onProfitPercentageChange={(e) => setProfitPercentage(e.target.value)}
+                        onCalculationModeChange={(e) => setCalculationMode(e.target.value)}
+                        addedProducts={addedProducts}
+                        onFinalizeStock={handleFinalizeStock}
+                        isFinalizing={isFinalizing}
+                        onShowAllProducts={() => setShowAllProducts(true)}
+                        tempProductsCount={addedProducts.length}
+                    />
                 </div>
+                
                 <div className="form-card latest-products">
                     <ProductList
                         products={latestProducts}
@@ -863,19 +1256,25 @@ const StockControl = () => {
                         isLoading={isLoading}
                     />
                 </div>
+                
                 <button className="button show-full-stock-button" onClick={() => setShowFullStock(true)}>
                     Ver Inventario Completo ({products.length} productos)
                 </button>
+                
                 <Modals
                     showDeleteCategoryModal={showDeleteCategoryModal}
                     categoryToDelete={categoryToDelete}
                     showDeleteProductModal={showDeleteProductModal}
                     productToDelete={productToDelete}
+                    showAllProducts={showAllProducts}
+                    addedProducts={addedProducts}
                     onCancelDeleteCategory={handleCancelDeleteCategory}
                     onDeleteCategory={handleDeleteCategory}
                     onCancelDeleteProduct={handleCancelDeleteProduct}
                     onDeleteProductConfirmed={handleDeleteProductConfirmed}
+                    onCloseAllProducts={() => setShowAllProducts(false)}
                 />
+                
                 <PermissionDeniedModal
                     show={showPermissionModal}
                     onClose={() => setShowPermissionModal(false)}
