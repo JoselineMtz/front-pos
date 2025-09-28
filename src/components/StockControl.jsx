@@ -408,10 +408,10 @@ const StockControl = () => {
     const [requiredPermission, setRequiredPermission] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
 
-    // ✅ URL base corregida - IMPORTANTE: Verifica que estas rutas sean correctas
-    const API_BASE_URL = process.env.NODE_ENV === 'production' 
-        ? '/api' 
-        : 'http://localhost:4000/api';
+// ✅ Define la URL de tu API en un solo lugar.
+//    Crea un archivo .env en la raíz de tu proyecto frontend con:
+//    VITE_API_URL=https://tu-backend.onrender.com
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
     
     const token = localStorage.getItem('token');
     const config = {
