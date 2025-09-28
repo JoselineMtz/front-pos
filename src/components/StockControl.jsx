@@ -407,8 +407,11 @@ const StockControl = () => {
     const [requiredPermission, setRequiredPermission] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
 
-    // ✅ URL base corregida
-    const API_URL = 'http://localhost:4000/api/stock';
+    // ✅ URL base corregida - usa rutas relativas para producción
+    const API_URL = process.env.NODE_ENV === 'production' 
+        ? '/api/stock' 
+        : 'http://localhost:4000/api/stock';
+    
     const token = localStorage.getItem('token');
     const config = {
         headers: {
@@ -476,7 +479,6 @@ const StockControl = () => {
     const fetchProducts = useCallback(async () => {
         setIsLoading(true);
         try {
-            // ✅ Ruta corregida: /api/stock/products
             const response = await axios.get(`${API_URL}/products`, config);
             const sortedProducts = response.data.sort((a, b) => b.id - a.id);
             setProducts(sortedProducts);
@@ -491,18 +493,17 @@ const StockControl = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [config]);
+    }, [config, API_URL]);
 
     const fetchCategories = useCallback(async () => {
         try {
-            // ✅ Ruta corregida: /api/stock/categories
             const response = await axios.get(`${API_URL}/categories`, config);
             setCategories(response.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
             showMessage('Error al cargar categorías. Por favor, inténtalo de nuevo.', 'error');
         }
-    }, [config]);
+    }, [config, API_URL]);
 
     // Búsqueda por SKU - Se ejecuta cuando el campo pierde el foco
     const handleSkuSearch = useCallback(async () => {
@@ -510,7 +511,6 @@ const StockControl = () => {
         if (!skuToSearch) return;
 
         try {
-            // ✅ Ruta corregida: /api/stock/products/by-sku/
             const response = await axios.get(`${API_URL}/products/by-sku/${skuToSearch}`, config);
             const productFound = response.data;
 
@@ -554,7 +554,7 @@ const StockControl = () => {
                 showMessage('Error al buscar el producto. Inténtalo de nuevo.', 'error');
             }
         }
-    }, [formData.sku, config]);
+    }, [formData.sku, config, API_URL]);
 
     // Mostrar mensajes
     const showMessage = useCallback((message, type) => {
@@ -586,8 +586,6 @@ const StockControl = () => {
                 categoria_id: formData.categoria_id ? parseInt(formData.categoria_id) : null,
                 purchase_price: parseFloat(formData.price) * 0.7
             };
-
-            console.log('Datos a enviar:', productToSave);
 
             await axios.post(`${API_URL}/products/upsert`, productToSave, config);
 
@@ -679,7 +677,6 @@ const StockControl = () => {
         if (!productToDelete) return;
 
         try {
-            // ✅ Ruta corregida: /api/stock/products/:id
             await axios.delete(`${API_URL}/products/${productToDelete.id}`, config);
             fetchProducts();
             setShowDeleteProductModal(false);
@@ -694,7 +691,7 @@ const StockControl = () => {
                 showMessage('Error al eliminar el producto. Intenta de nuevo.', 'error');
             }
         }
-    }, [productToDelete, config, fetchProducts]);
+    }, [productToDelete, config, fetchProducts, API_URL]);
 
     const handleCancelDeleteProduct = useCallback(() => {
         setShowDeleteProductModal(false);
@@ -712,7 +709,6 @@ const StockControl = () => {
             return;
         }
         try {
-            // ✅ Ruta corregida: /api/stock/categories
             await axios.post(`${API_URL}/categories`, { nombre: newCategoryName }, config);
             showMessage(`Categoría "${newCategoryName}" agregada con éxito`, 'added');
             setNewCategoryName('');
@@ -721,7 +717,7 @@ const StockControl = () => {
             console.error('Error adding category:', error);
             showMessage('Error al agregar la categoría. Por favor, inténtalo de nuevo.', 'error');
         }
-    }, [newCategoryName, config, fetchCategories]);
+    }, [newCategoryName, config, fetchCategories, API_URL]);
 
     const handleToggleCategoryManagement = useCallback(() => {
         setShowCategoryManagement(prev => !prev);
@@ -734,7 +730,6 @@ const StockControl = () => {
 
     const handleDeleteCategory = useCallback(async () => {
         try {
-            // ✅ Ruta corregida: /api/stock/categories/:id
             await axios.delete(`${API_URL}/categories/${categoryToDelete.id}`, config);
             setShowDeleteCategoryModal(false);
             setCategoryToDelete(null);
@@ -748,7 +743,7 @@ const StockControl = () => {
                 showMessage('Error al eliminar la categoría. Intenta de nuevo.', 'error');
             }
         }
-    }, [categoryToDelete, config, fetchCategories]);
+    }, [categoryToDelete, config, fetchCategories, API_URL]);
 
     const handleCancelDeleteCategory = useCallback(() => {
         setShowDeleteCategoryModal(false);
