@@ -1,11 +1,6 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-
-// ✅ Define la URL de tu API en un solo lugar.
-//    Crea un archivo .env en la raíz de tu proyecto frontend con:
-//    VITE_API_URL=https://tu-backend.onrender.com
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+import './StockControl.css';
 
 // Componente Modal de Permisos Insuficientes
 const PermissionDeniedModal = ({ show, onClose, requiredPermission, currentUser }) => {
