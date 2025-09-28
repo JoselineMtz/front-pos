@@ -53,7 +53,7 @@ const ProductForm = ({ formData, categories, products, onFormChange, onSkuSearch
                 <input
                     type="text"
                     name="sku"
-                    placeholder="SKU (Escanear o digitar)"
+                    placeholder="SKU (Escanear o digitar - Buscará automáticamente)"
                     value={formData.sku}
                     onChange={onFormChange}
                     onBlur={onSkuSearch}
@@ -410,7 +410,6 @@ const StockControl = () => {
     const [requiredPermission, setRequiredPermission] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
 
-    // ✅ Configuración corregida - Usa VITE_API_URL y agrega /api a todas las rutas
     const token = localStorage.getItem('token');
     const config = {
         headers: {
@@ -484,7 +483,6 @@ const StockControl = () => {
     const fetchProducts = useCallback(async () => {
         setIsLoading(true);
         try {
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products
             const response = await axios.get(`${API_BASE_URL}/api/stock/products`, config);
             const sortedProducts = response.data.sort((a, b) => b.id - a.id);
             setProducts(sortedProducts);
@@ -505,7 +503,6 @@ const StockControl = () => {
 
     const fetchCategories = useCallback(async () => {
         try {
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/categories
             const response = await axios.get(`${API_BASE_URL}/api/stock/categories`, config);
             setCategories(response.data);
         } catch (error) {
@@ -527,7 +524,6 @@ const StockControl = () => {
 
         setIsSearching(true);
         try {
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/by-sku/
             const response = await axios.get(`${API_BASE_URL}/api/stock/products/by-sku/${skuToSearch}`, config);
             const productFound = response.data;
 
@@ -597,7 +593,6 @@ const StockControl = () => {
                 purchase_price: parseFloat(formData.price) * 0.7
             };
 
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/upsert
             await axios.post(`${API_BASE_URL}/api/stock/products/upsert`, productToSave, config);
 
             const isUpdate = products.some(p => p.sku === productToSave.sku);
@@ -661,7 +656,6 @@ const StockControl = () => {
                 purchase_price: parseFloat(editingProduct.price) * 0.7
             };
 
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/upsert
             await axios.post(`${API_BASE_URL}/api/stock/products/upsert`, productToUpdate, config);
             setEditingProduct(null);
             showMessage('Producto actualizado con éxito', 'updated');
@@ -691,7 +685,6 @@ const StockControl = () => {
         if (!productToDelete) return;
 
         try {
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/products/
             await axios.delete(`${API_BASE_URL}/api/stock/products/${productToDelete.id}`, config);
             fetchProducts();
             setShowDeleteProductModal(false);
@@ -724,7 +717,6 @@ const StockControl = () => {
             return;
         }
         try {
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/categories
             await axios.post(`${API_BASE_URL}/api/stock/categories`, { nombre: newCategoryName }, config);
             showMessage(`Categoría "${newCategoryName}" agregada con éxito`, 'added');
             setNewCategoryName('');
@@ -746,7 +738,6 @@ const StockControl = () => {
 
     const handleDeleteCategory = useCallback(async () => {
         try {
-            // ✅ URL corregida: usa API_BASE_URL + /api/stock/categories/
             await axios.delete(`${API_BASE_URL}/api/stock/categories/${categoryToDelete.id}`, config);
             setShowDeleteCategoryModal(false);
             setCategoryToDelete(null);
